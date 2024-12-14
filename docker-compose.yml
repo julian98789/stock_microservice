@@ -7,26 +7,24 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: stock
-
     ports:
-      - "3307:3306"
+      - "3307:3307" # Mapeo directo del puerto 3307
     volumes:
       - db_data:/var/lib/mysql
-
+    command: --port=3307 # Cambia el puerto interno de MySQL
 
   java-app:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - mySQL
     ports:
-        - "8080:8080"
+      - "8080:8080"
     environment:
-        SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:3307/stock
-        SPRING_DATASOURCE_USERNAME: root
-        SPRING_DATASOURCE_PASSWORD: root
-
+      SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:3307/stock # Conexión al puerto 3307 interno
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
 
 volumes:
   db_data:

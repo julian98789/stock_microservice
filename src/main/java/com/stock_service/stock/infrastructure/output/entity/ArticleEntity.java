@@ -1,3 +1,4 @@
+
 package com.stock_service.stock.infrastructure.output.entity;
 
 import jakarta.persistence.*;
