@@ -4,7 +4,7 @@ import com.stock_service.stock.domain.api.ICategoryModelServicePort;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.ICategoryModelPersistencePort;
-import com.stock_service.stock.domain.util.Message;
+import com.stock_service.stock.domain.util.UtilMessage;
 
 
 public class CategoryModelUseCase implements ICategoryModelServicePort {
@@ -18,7 +18,7 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
     @Override
     public CategoryModel saveCategory(CategoryModel categoryModel) {
        if (categoryModelPersistencePort.existByName(categoryModel.getName())) {
-           throw new NameAlreadyExistsException(Message.CATEGORY_NAME_ALREADY_EXISTS);
+           throw new NameAlreadyExistsException(UtilMessage.CATEGORY_NAME_ALREADY_EXISTS);
        }
          return categoryModelPersistencePort.saveCategory(categoryModel);
     }
