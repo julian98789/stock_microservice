@@ -6,7 +6,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mysqlDocker
+      MYSQL_DATABASE: stock
+
     ports:
       - "3307:3306"
     volumes:
@@ -22,7 +23,7 @@ services:
     ports:
         - "8080:8080"
     environment:
-        SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:3306/mysqlDocker
+        SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:3307/stock
         SPRING_DATASOURCE_USERNAME: root
         SPRING_DATASOURCE_PASSWORD: root
 
