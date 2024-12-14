@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +24,8 @@ public class ArticleEntity {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, precision = 20, scale = 2)
-    private BigDecimal price;
+    @Column(precision = 10)
+    private double precio;
 
     @Column(nullable = false)
     private String name;
