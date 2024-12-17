@@ -3,19 +3,20 @@ package com.stock_service.stock.infrastructure.input.controller;
 import com.stock_service.stock.application.dto.category_dto.CategoryRequest;
 import com.stock_service.stock.application.dto.category_dto.CategoryResponse;
 import com.stock_service.stock.application.handler.category_handler.CategoryHandler;
+import com.stock_service.stock.domain.util.Paginated;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/category")
@@ -43,5 +44,17 @@ public class CategoryRestController {
     public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
         CategoryResponse savedCategory = categoryHandler.saveCategory(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+    }
+
+    @GetMapping
+    public ResponseEntity<Paginated<CategoryResponse>> getCategorie(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
+            @RequestParam(defaultValue = "true") boolean ascending) {
+
+        Paginated<CategoryResponse> paginatedResult = categoryHandler.getCategories(page, size, sort, ascending);
+
+        return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 }
