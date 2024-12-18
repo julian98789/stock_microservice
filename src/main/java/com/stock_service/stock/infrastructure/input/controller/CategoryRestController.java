@@ -40,13 +40,27 @@ public class CategoryRestController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
                     content = @Content(mediaType = "application/json"))
     })
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
         CategoryResponse savedCategory = categoryHandler.saveCategory(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
-    @GetMapping
+    @Operation(
+            summary = "Obtener categorías paginadas",
+            description = "Este endpoint permite obtener una lista paginada de categorías, con opciones de ordenación y paginación.",
+            tags = {"Category"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Categorías obtenidas exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Paginated.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/listar")
     public ResponseEntity<Paginated<CategoryResponse>> getCategorie(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) int size,

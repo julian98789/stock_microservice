@@ -1,20 +1,26 @@
 package com.stock_service.stock.infrastructure.output.adapter;
 
 import com.stock_service.stock.domain.model.CategoryModel;
+import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.infrastructure.output.entity.CategoryEntity;
 import com.stock_service.stock.infrastructure.output.mapper.ICategoryEntityMapper;
 import com.stock_service.stock.infrastructure.output.repository.ICategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class CategoryJpaAdapterTest {
 
@@ -77,5 +83,33 @@ class CategoryJpaAdapterTest {
         assertFalse(result);
 
         verify(categoryRepository).findByName("nonExistentCategory");
+    }
+
+    @Test
+    @DisplayName("Debe devolver categorías paginadas correctamente")
+    void getCategories() {
+        int page = 0;
+        int size = 10;
+        String sort = "name";
+        boolean ascending = true;
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sort);
+        List<CategoryEntity> categoryEntitiesList = List.of(categoryEntity);
+        Page<CategoryEntity> categoryEntities = new PageImpl<>(categoryEntitiesList, pageRequest, categoryEntitiesList.size());
+
+        when(categoryRepository.findAll(pageRequest)).thenReturn(categoryEntities);
+        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntity)).thenReturn(categoryModel);
+
+        Paginated<CategoryModel> result = categoryJpaAdapter.getCategories(page, size, sort, ascending);
+
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals(categoryModel, result.getContent().get(0));
+        assertEquals(page, result.getPageNumber());
+        assertEquals(size, result.getPageSize());
+        assertEquals(1, result.getTotalPages());
+
+        verify(categoryRepository, times(1)).findAll(pageRequest);
+        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntity);
     }
 }

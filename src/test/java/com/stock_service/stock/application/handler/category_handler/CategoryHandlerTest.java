@@ -6,15 +6,18 @@ import com.stock_service.stock.application.mapper.category_mapper.ICategoryReque
 import com.stock_service.stock.application.mapper.category_mapper.ICategoryResponseMapper;
 import com.stock_service.stock.domain.api.ICategoryModelServicePort;
 import com.stock_service.stock.domain.model.CategoryModel;
+import com.stock_service.stock.domain.util.Paginated;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class CategoryHandlerTest {
 
@@ -30,6 +33,7 @@ class CategoryHandlerTest {
     private CategoryRequest categoryRequest;
     private CategoryModel categoryModel;
     private CategoryResponse categoryResponse;
+    private Paginated<CategoryModel> paginatedCategoryModel;
 
     @InjectMocks
     CategoryHandler categoryHandler;
@@ -62,5 +66,34 @@ class CategoryHandlerTest {
         verify(categoryRequestMapper).categoryrequestToCategoryModel(categoryRequest);
         verify(categoryModelServicePort).saveCategory(categoryModel);
         verify(categoryResponseMapper).categoryModelToCategoryResponse(categoryModel);
+    }
+
+    @Test
+    @DisplayName("Debe devolver categorías paginadas correctamente")
+    void getCategories() {
+        int page = 0;
+        int size = 10;
+        String sort = "name";
+        boolean ascending = true;
+
+        categoryResponse.setId(1L);
+        categoryResponse.setName("Books");
+        categoryResponse.setDescription("Various books");
+        paginatedCategoryModel = new Paginated<>(List.of(categoryModel), page, size, 1);
+
+        when(categoryModelServicePort.getCategories(page, size, sort, ascending)).thenReturn(paginatedCategoryModel);
+        when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
+
+        Paginated<CategoryResponse> result = categoryHandler.getCategories(page, size, sort, ascending);
+
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals(categoryResponse, result.getContent().get(0));
+        assertEquals(page, result.getPageNumber());
+        assertEquals(size, result.getPageSize());
+        assertEquals(1, result.getTotalPages());
+
+        verify(categoryModelServicePort, times(1)).getCategories(page, size, sort, ascending);
+        verify(categoryResponseMapper, times(1)).categoryModelToCategoryResponse(categoryModel);
     }
 }

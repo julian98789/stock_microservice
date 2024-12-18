@@ -28,7 +28,6 @@ class CategoryModelUseCaseTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        categoryModelUseCase = new CategoryModelUseCase(categoryModelPersistencePort);
         categoryModel = new CategoryModel(6L, "Electronics", "Electronic devices");
     }
 
@@ -59,5 +58,19 @@ class CategoryModelUseCaseTest {
         boolean exist= categoryModelUseCase.existByName(existingCategoryName);
 
         verify(categoryModelPersistencePort, times(1)).existByName(existingCategoryName);
+    }
+
+
+    @Test
+    @DisplayName("Debe llamar a getCategories con los parámetros correctos")
+    void getCategories() {
+        int page = 0;
+        int size = 10;
+        String sort = "name";
+        boolean ascending = true;
+
+        categoryModelUseCase.getCategories(page, size, sort, ascending);
+
+        verify(categoryModelPersistencePort, times(1)).getCategories(page, size, sort, ascending);
     }
 }
