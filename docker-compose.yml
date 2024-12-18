@@ -3,30 +3,41 @@ version: '3.8'
 services:
   mySQL:
     image: mysql:latest
+    container_name: mysql-container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: stock
-
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Definido en .env
+      MYSQL_DATABASE: ${MYSQL_DATABASE}         # Definido en .env
     ports:
-      - "3307:3306"
+      - "${MYSQL_PORT}:${MYSQL_PORT}"          # Mapeo directo del puerto 3307
     volumes:
       - db_data:/var/lib/mysql
-
+    command: --port=${MYSQL_PORT}               # Cambia el puerto interno de MySQL
+    networks:
+      - backend
 
   java-app:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
+    container_name: java-app-container
     depends_on:
       - mySQL
     ports:
-        - "8080:8080"
+      - "${JAVA_APP_PORT}:${JAVA_APP_PORT}"
     environment:
-        SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:3307/stock
-        SPRING_DATASOURCE_USERNAME: root
-        SPRING_DATASOURCE_PASSWORD: root
-
+      SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - backend
 
 volumes:
   db_data:
+
+networks:
+  backend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+
