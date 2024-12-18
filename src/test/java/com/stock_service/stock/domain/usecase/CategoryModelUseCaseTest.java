@@ -55,7 +55,7 @@ class CategoryModelUseCaseTest {
 
         when(categoryModelPersistencePort.existByName(existingCategoryName)).thenReturn(false);
 
-        boolean exist= categoryModelUseCase.existByName(existingCategoryName);
+        categoryModelUseCase.existByName(existingCategoryName);
 
         verify(categoryModelPersistencePort, times(1)).existByName(existingCategoryName);
     }

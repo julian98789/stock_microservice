@@ -11,7 +11,8 @@ public class UtilMessage {
     public static final int DESCRIPTION_CATEGORY_MAX_VALUE = 90;
     public static final String DESCRIPTION_CATEGORY_SIZE = "El tamaño debe estar entre 1 y 90 caracteres.";
 
-
-
-
+    // Private constructor to prevent instantiation
+    private UtilMessage() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 }
