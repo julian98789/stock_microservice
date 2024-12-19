@@ -14,6 +14,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CategoryRestController {
 
-    private final CategoryHandler categoryHandler;
+    private static final Logger logger = LoggerFactory.getLogger(CategoryRestController.class);
 
+    private final CategoryHandler categoryHandler;
 
     @Operation(
             summary = "Crear una nueva categoría",
@@ -42,7 +45,11 @@ public class CategoryRestController {
     })
     @PostMapping("/crear")
     public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
+
+        logger.info("[Infraestructura] Recibiendo solicitud para crear categoria con los siguientes datos: nombre = {}", categoryRequest.getName());
         CategoryResponse savedCategory = categoryHandler.saveCategory(categoryRequest);
+
+        logger.info("[Infraestructura] Categoria creada exitosamente con nombre: {}", savedCategory.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
@@ -67,8 +74,10 @@ public class CategoryRestController {
             @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
             @RequestParam(defaultValue = "true") boolean ascending) {
 
+        logger.info("[Infraestructura] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         Paginated<CategoryResponse> paginatedResult = categoryHandler.getCategories(page, size, sort, ascending);
 
+        logger.info("[Infraestructura] Se obtuvieron {} categorias en la pagina {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 }
