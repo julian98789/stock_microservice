@@ -48,7 +48,7 @@ class CategoryHandlerTest {
         categoryResponse = new CategoryResponse();
 
         // Mock de las respuestas esperadas
-        when(categoryRequestMapper.categoryrequestToCategoryModel(categoryRequest)).thenReturn(categoryModel);
+        when(categoryRequestMapper.categoryRequestToCategoryModel(categoryRequest)).thenReturn(categoryModel);
         when(categoryModelServicePort.saveCategory(categoryModel)).thenReturn(categoryModel);
         when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
     }
@@ -63,7 +63,7 @@ class CategoryHandlerTest {
         assertEquals(categoryResponse, result);
 
         // Verificar interacciones con los mocks
-        verify(categoryRequestMapper).categoryrequestToCategoryModel(categoryRequest);
+        verify(categoryRequestMapper).categoryRequestToCategoryModel(categoryRequest);
         verify(categoryModelServicePort).saveCategory(categoryModel);
         verify(categoryResponseMapper).categoryModelToCategoryResponse(categoryModel);
     }

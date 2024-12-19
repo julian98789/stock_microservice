@@ -37,9 +37,10 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
 
     @Override
     public boolean existByName(String name) {
-        logger.debug("[Dominio] Recibiendo solicitud para verificar existencia de categoria con nombre: {}", name);
 
+        logger.debug("[Dominio] Recibiendo solicitud para verificar existencia de categoria con nombre: {}", name);
         boolean exists = categoryModelPersistencePort.existByName(name);
+
         logger.debug("[Dominio] Resultado de la verificación de existencia para el nombre '{}' es: {}", name, exists);
         return exists;
     }
