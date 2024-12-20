@@ -1,8 +1,8 @@
 package com.stock_service.stock.infrastructure.input.controller;
 
-import com.stock_service.stock.application.dto.category_dto.CategoryRequest;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponse;
-import com.stock_service.stock.application.handler.category_handler.CategoryHandler;
+import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
+import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
+import com.stock_service.stock.application.handler.brand_handler.BrandHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,45 +21,44 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/brand")
 @RequiredArgsConstructor
-public class CategoryRestController {
+public class BrandRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CategoryRestController.class);
-
-    private final CategoryHandler categoryHandler;
+    private final BrandHandler brandHandler;
+    private static final Logger logger = LoggerFactory.getLogger(BrandRestController.class);
 
     @Operation(
-            summary = "Crear una nueva categoría",
-            description = "Este endpoint permite crear una nueva categoría en el sistema enviando los datos necesarios en el cuerpo de la solicitud.",
-            tags = {"Category"}
+            summary = "Crear una nueva marca",
+            description = "Este endpoint permite crear una nueva marca en el sistema enviando los datos necesarios en el cuerpo de la solicitud.",
+            tags = {"Brand"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Categoría creada exitosamente",
+            @ApiResponse(responseCode = "201", description = "Marca creada exitosamente",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CategoryResponse.class))),
+                            schema = @Schema(implementation = BrandResponse.class))),
             @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
                     content = @Content(mediaType = "application/json"))
     })
     @PostMapping("/crear")
-    public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<BrandResponse> saveBrand(@Valid @RequestBody BrandRequest brandRequest) {
 
-        logger.info("[Infraestructura] Recibiendo solicitud para crear categoria ");
-        CategoryResponse savedCategory = categoryHandler.saveCategory(categoryRequest);
+        logger.info("[Infraestructura] Recibiendo solicitud para crear marca ");
+        BrandResponse savedBrand = brandHandler.saveBrand(brandRequest);
 
-        logger.info("[Infraestructura] Categoria creada exitosamente con nombre: {}", savedCategory.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+        logger.info("[Infraestructura] Marca creada exitosamente con nombre: {}", savedBrand.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBrand);
     }
 
     @Operation(
-            summary = "Obtener categorías paginadas",
-            description = "Este endpoint permite obtener una lista paginada de categorías, con opciones de ordenación y paginación.",
-            tags = {"Category"}
+            summary = "Obtener marcas paginadas",
+            description = "Este endpoint permite obtener una lista paginada de marcas, con opciones de ordenación y paginación.",
+            tags = {"Brand"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Categorías obtenidas exitosamente",
+            @ApiResponse(responseCode = "200", description = "Marcas obtenidas exitosamente",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Paginated.class))),
             @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
@@ -68,16 +67,16 @@ public class CategoryRestController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/listar")
-    public ResponseEntity<Paginated<CategoryResponse>> getCategorie(
+    public ResponseEntity<Paginated<BrandResponse>> getBrand(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) int size,
             @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
             @RequestParam(defaultValue = "true") boolean ascending) {
 
-        logger.info("[Infraestructura] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<CategoryResponse> paginatedResult = categoryHandler.getCategories(page, size, sort, ascending);
+        logger.info("[Infraestructura] Recibiendo solicitud para obtener marcas con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
+        Paginated<BrandResponse> paginatedResult = brandHandler.getBrands(page, size, sort, ascending);
 
-        logger.info("[Infraestructura] Se obtuvieron {} categorias en la pagina {}", paginatedResult.getContent().size(), page);
+        logger.info("[Infraestructura] Se obtuvieron {} marcas en la pagina {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 }

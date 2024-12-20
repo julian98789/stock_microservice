@@ -3,6 +3,7 @@ package com.stock_service.stock.domain.usecase;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.ICategoryModelPersistencePort;
+import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.UtilMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -62,15 +66,31 @@ class CategoryModelUseCaseTest {
 
 
     @Test
-    @DisplayName("Debe llamar a getCategories con los parámetros correctos")
+    @DisplayName("Deberían devolverse las categorías paginadas correctamente")
     void getCategories() {
-        int page = 0;
-        int size = 10;
+        int page = 1;
+        int size = 5;
         String sort = "name";
         boolean ascending = true;
 
-        categoryModelUseCase.getCategories(page, size, sort, ascending);
+        CategoryModel categoryModel1 = new CategoryModel(1L, "Electronics", "Electronic devices");
+        CategoryModel categoryModel2 = new CategoryModel(2L, "Books", "Books and novels");
+
+        List<CategoryModel> categoryList = Arrays.asList(categoryModel1, categoryModel2);
+        Paginated<CategoryModel> paginatedResponse = new Paginated<>(categoryList, page, size, 10);
+
+        when(categoryModelPersistencePort.getCategories(page, size, sort, ascending)).thenReturn(paginatedResponse);
+
+        Paginated<CategoryModel>  result = categoryModelUseCase.getCategories(page, size, sort, ascending);
+
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+        assertEquals(1, result.getPageNumber());
+        assertEquals(5, result.getPageSize());
+        assertEquals(10, result.getTotalElements());
+        assertEquals(2, result.getTotalPages());
 
         verify(categoryModelPersistencePort, times(1)).getCategories(page, size, sort, ascending);
+
     }
 }
