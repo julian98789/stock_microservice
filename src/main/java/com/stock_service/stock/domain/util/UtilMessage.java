@@ -10,6 +10,7 @@ public class UtilMessage {
     public static final int DESCRIPTION_MIN_VALUE = 1;
     public static final int DESCRIPTION_CATEGORY_MAX_VALUE = 90;
     public static final String DESCRIPTION_CATEGORY_SIZE = "El tamaño debe estar entre 1 y 90 caracteres.";
+    public static final String BRAND_NAME_ALREADY_EXISTS = "La marca ya existe";
 
     // Private constructor to prevent instantiation
     private UtilMessage() {
