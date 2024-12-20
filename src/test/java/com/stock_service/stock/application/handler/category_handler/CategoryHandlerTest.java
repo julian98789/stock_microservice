@@ -30,13 +30,15 @@ class CategoryHandlerTest {
     @Mock
     private  ICategoryResponseMapper categoryResponseMapper;
 
+    @InjectMocks
+    CategoryHandler categoryHandler;
+
     private CategoryRequest categoryRequest;
     private CategoryModel categoryModel;
     private CategoryResponse categoryResponse;
     private Paginated<CategoryModel> paginatedCategoryModel;
 
-    @InjectMocks
-    CategoryHandler categoryHandler;
+
 
     @BeforeEach
     void setUp() {
