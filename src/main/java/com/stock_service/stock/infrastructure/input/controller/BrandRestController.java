@@ -2,9 +2,13 @@ package com.stock_service.stock.infrastructure.input.controller;
 
 import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
 import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
-
 import com.stock_service.stock.application.handler.brand_handler.BrandHandler;
 import com.stock_service.stock.domain.util.Paginated;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -22,8 +26,22 @@ import org.springframework.web.bind.annotation.*;
 public class BrandRestController {
 
     private final BrandHandler brandHandler;
-
     private static final Logger logger = LoggerFactory.getLogger(BrandRestController.class);
+
+    @Operation(
+            summary = "Crear una nueva marca",
+            description = "Este endpoint permite crear una nueva marca en el sistema enviando los datos necesarios en el cuerpo de la solicitud.",
+            tags = {"Brand"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Marca creada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BrandResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PostMapping("/crear")
     public ResponseEntity<BrandResponse> saveBrand(@Valid @RequestBody BrandRequest brandRequest) {
 
@@ -34,6 +52,20 @@ public class BrandRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBrand);
     }
 
+    @Operation(
+            summary = "Obtener marcas paginadas",
+            description = "Este endpoint permite obtener una lista paginada de marcas, con opciones de ordenación y paginación.",
+            tags = {"Brand"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Marcas obtenidas exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Paginated.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
     @GetMapping("/listar")
     public ResponseEntity<Paginated<BrandResponse>> getBrand(
             @RequestParam(defaultValue = "0") @Min(0) int page,
