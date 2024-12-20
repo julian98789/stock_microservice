@@ -28,13 +28,10 @@ public class CategoryJpaAdapter implements ICategoryModelPersistencePort {
 
         logger.info("[Infraestructura] Recibiendo solicitud para guardar la categoria con nombre: {}", categoryModel.getName());
 
-        logger.info("[Infraestructura] Iniciando el mapeo del modelo de categoria a entidad para la categoria: {}", categoryModel.getName());
         CategoryEntity categoryEntity = categoryEntityMapper.categoryModelToCategoryEntity(categoryModel);
 
-        logger.info("[Infraestructura] Mapeo completado, entidad lista para guardar: {}", categoryEntity);
         categoryEntity = categoryRepository.save(categoryEntity);
 
-        logger.info("[Infraestructura] Categoria guardada exitosamente con id: {} y nombre: {}", categoryEntity.getId(), categoryEntity.getName());
         CategoryModel savedCategoryModel = categoryEntityMapper.categoryEntityToCategoryModel(categoryEntity);
 
         logger.info("[Infraestructura] Mapeo de entidad a modelo completado, categoria retornada con id: {}", savedCategoryModel.getId());
@@ -47,12 +44,7 @@ public class CategoryJpaAdapter implements ICategoryModelPersistencePort {
 
         boolean exists = categoryRepository.findByName(name).isPresent();
 
-        if (exists) {
-            logger.info("[Infraestructura] La categoria con nombre {} ya existe en la base de datos", name);
-        } else {
-            logger.info("[Infraestructura] No se encontró categoria con el nombre {}", name);
-        }
-
+        logger.info("[Infraestructura] No se encontro categoria con el nombre {}", name);
         return exists;
     }
 
@@ -62,10 +54,8 @@ public class CategoryJpaAdapter implements ICategoryModelPersistencePort {
         logger.info("[Infraestructura] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         PageRequest pageRequest = PageRequest.of(page, size, ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sort);
 
-        logger.info("[Infraestructura] Request de página creado: {}", pageRequest);
         Page<CategoryEntity> categoryEntities = categoryRepository.findAll(pageRequest);
 
-        logger.info("[Infraestructura] Categorias recuperadas de la base de datos. Total de registros: {}", categoryEntities.getTotalElements());
         List<CategoryModel> categoryModels = categoryEntities.stream()
                 .map(categoryEntityMapper::categoryEntityToCategoryModel)
                 .toList();
@@ -85,7 +75,6 @@ public class CategoryJpaAdapter implements ICategoryModelPersistencePort {
         logger.info("[Infraestructura] Recibiendo solicitud para recuperar categorias con los siguientes ids: {}", ids);
         List<CategoryEntity> categoryEntities = categoryRepository.findAllById(ids);
 
-        logger.info("[Infraestructura] Se han recuperado {} entidades de categoria con los ids proporcionados", categoryEntities.size());
         List<CategoryModel> categoryModels = categoryEntities.stream()
                 .map(categoryEntityMapper::categoryEntityToCategoryModel)
                 .toList();

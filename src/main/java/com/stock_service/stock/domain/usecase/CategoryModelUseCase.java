@@ -28,7 +28,6 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
             throw new NameAlreadyExistsException(UtilMessage.CATEGORY_NAME_ALREADY_EXISTS);
         }
 
-        logger.info("[Dominio] El nombre de la categoria es valido. Iniciando proceso de guardado.");
         CategoryModel savedCategory = categoryModelPersistencePort.saveCategory(categoryModel);
 
         logger.info("[Dominio] Categoria guardada exitosamente con id: {} y nombre: {}", savedCategory.getId(), savedCategory.getName());
@@ -41,14 +40,14 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
         logger.debug("[Dominio] Recibiendo solicitud para verificar existencia de categoria con nombre: {}", name);
         boolean exists = categoryModelPersistencePort.existByName(name);
 
-        logger.debug("[Dominio] Resultado de la verificación de existencia para el nombre '{}' es: {}", name, exists);
+        logger.debug("[Dominio] Resultado de la verificacion de existencia para el nombre '{}' es: {}", name, exists);
         return exists;
     }
 
     @Override
     public Paginated<CategoryModel> getCategories(int page, int size, String sort, boolean ascending) {
-        logger.info("[Dominio] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
 
+        logger.info("[Dominio] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         Paginated<CategoryModel> categories = categoryModelPersistencePort.getCategories(page, size, sort, ascending);
 
         logger.info("[Dominio] Se obtuvieron {} categorias en la pagina {}", categories.getContent().size(), page);

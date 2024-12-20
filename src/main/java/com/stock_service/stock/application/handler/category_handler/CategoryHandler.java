@@ -27,13 +27,11 @@ public class CategoryHandler implements ICategoryHandler {
 
     @Override
     public CategoryResponse saveCategory(CategoryRequest categoryRequest) {
-        logger.info("[Aplicacion] Recibiendo solicitud de creación de categoria desde Controller con nombre: {}", categoryRequest.getName());
+        logger.info("[Aplicacion] Recibiendo solicitud de creacion de categoria desde Controller con nombre: {}", categoryRequest.getName());
         CategoryModel categoryModel = categoryRequestMapper.categoryRequestToCategoryModel(categoryRequest);
 
-        logger.info("[Aplicacion] Mapeo de CategoryRequest a CategoryModel con nombre: {}", categoryModel.getName());
         CategoryModel savedCategory = categoryModelServicePort.saveCategory(categoryModel);
 
-        logger.info("[Aplicacion] Categoria guardada exitosamente con ID: {} y nombre: {}", savedCategory.getId(), savedCategory.getName());
         CategoryResponse categoryResponse = categoryResponseMapper.categoryModelToCategoryResponse(savedCategory);
 
         logger.info("[Aplicacion] Respuesta mapeada a CategoryResponse con ID: {} y nombre: {}", categoryResponse.getId(), categoryResponse.getName());
@@ -45,12 +43,11 @@ public class CategoryHandler implements ICategoryHandler {
         logger.info("[Aplicacion] Recibiendo solicitud para obtener categorias desde Controller con parámetros - Página: {}, Tamaño: {}, Orden: {}, Ascendente: {}", page, size, sort, ascending);
         Paginated<CategoryModel> categories = categoryModelServicePort.getCategories(page, size, sort, ascending);
 
-        logger.info("[Aplicacion] Se obtuvieron {} categorias en la página: {}", categories.getContent().size(), page);
         List<CategoryResponse> categoryResponse = categories.getContent().stream()
                 .map(categoryResponseMapper::categoryModelToCategoryResponse)
                 .toList();
 
-        logger.info("[Aplicacion] Se mapeó {} categorias a CategoryResponse", categoryResponse.size());
+        logger.info("[Aplicacion] Se mapeo {} categorias a CategoryResponse", categoryResponse.size());
         return new Paginated<>(
                 categoryResponse,
                 categories.getPageNumber(),

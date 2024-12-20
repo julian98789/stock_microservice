@@ -46,7 +46,7 @@ public class CategoryRestController {
     @PostMapping("/crear")
     public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
 
-        logger.info("[Infraestructura] Recibiendo solicitud para crear categoria con los siguientes datos: nombre = {}", categoryRequest.getName());
+        logger.info("[Infraestructura] Recibiendo solicitud para crear categoria ");
         CategoryResponse savedCategory = categoryHandler.saveCategory(categoryRequest);
 
         logger.info("[Infraestructura] Categoria creada exitosamente con nombre: {}", savedCategory.getName());
