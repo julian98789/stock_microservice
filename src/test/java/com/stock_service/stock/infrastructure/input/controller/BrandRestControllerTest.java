@@ -1,6 +1,5 @@
 package com.stock_service.stock.infrastructure.input.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
 import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
@@ -26,7 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class BrandRestControllerTest {

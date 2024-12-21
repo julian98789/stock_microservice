@@ -2,10 +2,9 @@ package com.stock_service.stock.domain.usecase;
 
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.model.BrandModel;
-import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.IBrandModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
-import com.stock_service.stock.domain.util.UtilMessage;
+import com.stock_service.stock.domain.util.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,7 @@ class BrandModelUseCaseTest {
                 () -> brandModelUseCase.saveBrand(brandModel)
         );
 
-        assertEquals(UtilMessage.BRAND_NAME_ALREADY_EXISTS, exception.getMessage());
+        assertEquals(Util.BRAND_NAME_ALREADY_EXISTS, exception.getMessage());
         verify(brandModelPersistencePort, never()).saveBrand(brandModel);
 
     }

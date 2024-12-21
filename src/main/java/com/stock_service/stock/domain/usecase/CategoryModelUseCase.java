@@ -5,7 +5,7 @@ import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.ICategoryModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
-import com.stock_service.stock.domain.util.UtilMessage;
+import com.stock_service.stock.domain.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
 
         if (categoryModelPersistencePort.existByName(categoryModel.getName())) {
             logger.warn("[Dominio] El nombre de la categoria '{}' ya existe. Lanzando excepcion NameAlreadyExistsException", categoryModel.getName());
-            throw new NameAlreadyExistsException(UtilMessage.CATEGORY_NAME_ALREADY_EXISTS);
+            throw new NameAlreadyExistsException(Util.CATEGORY_NAME_ALREADY_EXISTS);
         }
 
         CategoryModel savedCategory = categoryModelPersistencePort.saveCategory(categoryModel);
@@ -34,15 +34,6 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
         return savedCategory;
     }
 
-    @Override
-    public boolean existByName(String name) {
-
-        logger.debug("[Dominio] Recibiendo solicitud para verificar existencia de categoria con nombre: {}", name);
-        boolean exists = categoryModelPersistencePort.existByName(name);
-
-        logger.debug("[Dominio] Resultado de la verificacion de existencia para el nombre '{}' es: {}", name, exists);
-        return exists;
-    }
 
     @Override
     public Paginated<CategoryModel> getCategories(int page, int size, String sort, boolean ascending) {
