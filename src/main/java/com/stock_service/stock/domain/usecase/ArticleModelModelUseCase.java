@@ -1,19 +1,19 @@
 package com.stock_service.stock.domain.usecase;
 
-import com.stock_service.stock.domain.api.IArticleServicePort;
+import com.stock_service.stock.domain.api.IArticleModelServicePort;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.model.ArticleModel;
-import com.stock_service.stock.domain.spi.IArticlePersistencePort;
+import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
 
 
-public class ArticleModelUseCase implements IArticleServicePort {
+public class ArticleModelModelUseCase implements IArticleModelServicePort {
 
-    private final IArticlePersistencePort articlePersistencePort;
+    private final IArticleModelPersistencePort articlePersistencePort;
 
 
-    public ArticleModelUseCase(IArticlePersistencePort articlePersistencePort) {
+    public ArticleModelModelUseCase(IArticleModelPersistencePort articlePersistencePort) {
         this.articlePersistencePort = articlePersistencePort;
     }
 
