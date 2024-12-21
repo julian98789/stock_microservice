@@ -24,8 +24,8 @@ public class ArticleEntity {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(precision = 10)
-    private double precio;
+    @Column(name = "price", nullable = false)
+    private double price;
 
     @Column(nullable = false)
     private String name;

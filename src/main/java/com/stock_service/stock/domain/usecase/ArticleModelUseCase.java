@@ -8,12 +8,12 @@ import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
 
 
-public class ArticleModelModelUseCase implements IArticleModelServicePort {
+public class ArticleModelUseCase implements IArticleModelServicePort {
 
     private final IArticleModelPersistencePort articlePersistencePort;
 
 
-    public ArticleModelModelUseCase(IArticleModelPersistencePort articlePersistencePort) {
+    public ArticleModelUseCase(IArticleModelPersistencePort articlePersistencePort) {
         this.articlePersistencePort = articlePersistencePort;
     }
 
