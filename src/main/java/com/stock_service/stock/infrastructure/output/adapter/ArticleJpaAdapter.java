@@ -21,7 +21,7 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
     private final IArticleRepository articleRepository;
     private final IArticleEntityMapper articleEntityMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(BrandJpaAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArticleJpaAdapter.class);
 
 
     @Override

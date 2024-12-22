@@ -4,7 +4,6 @@ package com.stock_service.stock.application.handler.article_handler;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
 import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
-import com.stock_service.stock.application.handler.brand_handler.BrandHandler;
 import com.stock_service.stock.application.mapper.article_mapper.IArticleRequestMapper;
 import com.stock_service.stock.application.mapper.article_mapper.IArticleResponseMapper;
 import com.stock_service.stock.domain.api.IArticleModelServicePort;
@@ -36,7 +35,7 @@ public class ArticleHandler implements IArticleHandler {
     private final IBrandModelPersistencePort brandModelPersistencePort;
     private final ICategoryModelPersistencePort categoryModelPersistencePort;
 
-    private static final Logger logger = LoggerFactory.getLogger(BrandHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArticleHandler.class);
 
     @Override
     public ArticleResponse saveArticle(ArticleRequest articleRequest) {

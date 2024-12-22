@@ -14,7 +14,7 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
 
     private final IArticleModelPersistencePort articlePersistencePort;
 
-    private static final Logger logger = LoggerFactory.getLogger(BrandModelUseCase.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArticleModelUseCase.class);
 
 
     public ArticleModelUseCase(IArticleModelPersistencePort articlePersistencePort) {
