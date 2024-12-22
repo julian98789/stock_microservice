@@ -29,12 +29,12 @@ public class BrandHandler implements IBrandHandler{
     @Override
     public BrandResponse saveBrand(BrandRequest brandRequest) {
 
-        logger.info("[Aplicacion] Recibiendo solicitud de creacion de marca desde Controller con nombre: {}", brandRequest.getName());
+        logger.info("[Aplicacion] Recibiendo solicitud de creacion de marca");
         BrandModel brandModel = brandRequestMapper.brandRequestToBrandModel(brandRequest);
         BrandModel savedBrand = brandModelServicePort.saveBrand(brandModel);
         BrandResponse brandResponse = brandResponseMapper.brandModelToBrandResponse(savedBrand);
 
-        logger.info("[Aplicacion] Respuesta mapeada a CategoryResponse con ID: {} y nombre: {}", brandResponse.getId(), brandResponse.getName());
+        logger.info("[Aplicacion] Respuesta mapeada a CategoryResponse");
         return brandResponse;
     }
 

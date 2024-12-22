@@ -27,14 +27,14 @@ public class CategoryHandler implements ICategoryHandler {
 
     @Override
     public CategoryResponse saveCategory(CategoryRequest categoryRequest) {
-        logger.info("[Aplicacion] Recibiendo solicitud de creacion de categoria desde Controller con nombre: {}", categoryRequest.getName());
+        logger.info("[Aplicacion] Recibiendo solicitud de creacion de categoria desde Controller ");
         CategoryModel categoryModel = categoryRequestMapper.categoryRequestToCategoryModel(categoryRequest);
 
         CategoryModel savedCategory = categoryModelServicePort.saveCategory(categoryModel);
 
         CategoryResponse categoryResponse = categoryResponseMapper.categoryModelToCategoryResponse(savedCategory);
 
-        logger.info("[Aplicacion] Respuesta mapeada a CategoryResponse con ID: {} y nombre: {}", categoryResponse.getId(), categoryResponse.getName());
+        logger.info("[Aplicacion] Respuesta mapeada a CategoryResponse ");
         return categoryResponse;
     }
 
