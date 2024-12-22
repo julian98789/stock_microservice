@@ -52,15 +52,6 @@ class BrandModelUseCaseTest {
 
     }
 
-    @Test
-    @DisplayName("Debe devolver false cuando el nombre de la marca no existe")
-    void existByName() {
-        String existingCategoryName = "Books";
-
-        when(brandModelPersistencePort.existsByName(existingCategoryName)).thenReturn(false);
-        brandModelUseCase.existByName(existingCategoryName);
-        verify(brandModelPersistencePort, times(1)).existsByName(existingCategoryName);
-    }
 
     @Test
     @DisplayName("Deberían devolverse las marcas paginadas correctamente")

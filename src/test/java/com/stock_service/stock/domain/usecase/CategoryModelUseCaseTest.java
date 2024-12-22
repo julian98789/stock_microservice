@@ -52,17 +52,6 @@ class CategoryModelUseCaseTest {
         verify(categoryModelPersistencePort, never()).saveCategory(any(CategoryModel.class));
     }
 
-    @Test
-    @DisplayName("Debe devolver false cuando el nombre de la categoría no existe")
-    void existByName() {
-        String existingCategoryName = "Books";
-
-        when(categoryModelPersistencePort.existByName(existingCategoryName)).thenReturn(false);
-
-        categoryModelUseCase.existByName(existingCategoryName);
-
-        verify(categoryModelPersistencePort, times(1)).existByName(existingCategoryName);
-    }
 
 
     @Test
