@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Definido en .env
       MYSQL_DATABASE: ${MYSQL_DATABASE}         # Definido en .env
     ports:
-      - "${MYSQL_PORT}:${MYSQL_PORT}"          # Mapeo directo del puerto 3307
+      - "${MYSQL_PORT}:${MYSQL_PORT}"          # Mapeo directo del puerto 3306
     volumes:
       - db_data:/var/lib/mysql
     command: --port=${MYSQL_PORT}               # Cambia el puerto interno de MySQL
@@ -26,7 +26,7 @@ services:
     ports:
       - "${JAVA_APP_PORT}:${JAVA_APP_PORT}"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:${MYSQL_PORT}/${MYSQL_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
@@ -37,7 +37,4 @@ volumes:
 
 networks:
   backend:
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
-
+    external: true
