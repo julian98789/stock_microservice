@@ -6,13 +6,13 @@ services:
     container_name: mysql-container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Definido en .env
-      MYSQL_DATABASE: ${MYSQL_DATABASE}         # Definido en .env
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
-      - "${MYSQL_PORT}:${MYSQL_PORT}"          # Mapeo directo del puerto 3306
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
       - db_data:/var/lib/mysql
-    command: --port=${MYSQL_PORT}               # Cambia el puerto interno de MySQL
+    command: --port=${MYSQL_PORT}
     networks:
       - backend
 
@@ -29,6 +29,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mySQL:${MYSQL_PORT}/${MYSQL_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     networks:
       - backend
 

@@ -4,6 +4,7 @@ import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
 import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
 import com.stock_service.stock.application.handler.brand_handler.BrandHandler;
 import com.stock_service.stock.domain.util.Paginated;
+import com.stock_service.stock.domain.util.Util;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,6 +44,7 @@ public class BrandRestController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
                     content = @Content(mediaType = "application/json"))
     })
+    @PreAuthorize(Util.ROLE_ADMIN )
     @PostMapping("/crear")
     public ResponseEntity<BrandResponse> saveBrand(@Valid @RequestBody BrandRequest brandRequest) {
 
@@ -66,6 +69,8 @@ public class BrandRestController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
                     content = @Content(mediaType = "application/json"))
     })
+
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/listar")
     public ResponseEntity<Paginated<BrandResponse>> getBrand(
             @RequestParam(defaultValue = "0") @Min(0) int page,
