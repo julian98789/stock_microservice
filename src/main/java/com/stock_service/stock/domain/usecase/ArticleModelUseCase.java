@@ -62,6 +62,22 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
         return article;
     }
 
+    @Override
+    public ArticleModel updateArticleQuantity(Long id, int quantity) {
+        logger.info("[Dominio] Actualizando cantidad del artículo con ID: {}", id);
+
+        ArticleModel article = articlePersistencePort.getArticleById(id);
+        if (article == null) {
+            logger.warn("[Dominio] Artículo con ID: {} no encontrado.", id);
+            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
+        }
+
+        article.setQuantity(quantity);
+
+        ArticleModel updatedArticle = articlePersistencePort.saveArticle(article);
+        logger.info("[Dominio] Artículo actualizado con nueva cantidad: {}", updatedArticle.getQuantity());
+        return updatedArticle;
+    }
 
 
 }

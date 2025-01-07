@@ -1,5 +1,6 @@
 package com.stock_service.stock.infrastructure.input.controller;
 
+import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
 import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
@@ -101,12 +102,26 @@ public class ArticleRestController {
                     content = @Content(mediaType = "application/json"))
     })
     @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
-    @GetMapping("/{id}")
-    public ResponseEntity<ArticleResponse> getArticleById(@PathVariable Long id) {
-        logger.info("[Infraestructura] Recibiendo solicitud para obtener artículo con ID: {}", id);
-        ArticleResponse articleResponse = articleHandler.getArticleById(id);
-        logger.info("[Infraestructura] Artículo encontrado con ID: {}", id);
+    @GetMapping("/{articleId}")
+    public ResponseEntity<ArticleResponse> getArticleById( @PathVariable Long articleId) {
+        logger.info("[Infraestructura] Recibiendo solicitud para obtener artículo con ID: {}", articleId);
+        ArticleResponse articleResponse = articleHandler.getArticleById(articleId);
+        logger.info("[Infraestructura] Artículo encontrado con ID: {}", articleId);
         return new ResponseEntity<>(articleResponse, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize(Util.ROLE_AUX_BODEGA)
+    @PatchMapping("/quantity/{articleId}")
+    public ResponseEntity<ArticleResponse> updateArticleQuantity(
+            @PathVariable Long articleId,
+            @RequestBody ArticleQuantityRequest articleQuantityRequest) {
+
+        logger.info("[Infraestructura] Recibiendo solicitud para actualizar la cantidad del articulo con ID: {}", articleId);
+        ArticleResponse updatedArticle = articleHandler.updateArticleQuantity(articleId, articleQuantityRequest);
+
+        logger.info("[Infraestructura] Cantidad del articulo con ID: {} actualizada exitosamente.", articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedArticle);
     }
 
 }

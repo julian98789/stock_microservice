@@ -1,6 +1,7 @@
 package com.stock_service.stock.application.handler.article_handler;
 
 
+import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
 import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
@@ -91,5 +92,13 @@ public class ArticleHandler implements IArticleHandler {
         ArticleModel articleModel = articleModelServicePort.getArticleById(id);
         return articleResponseMapper.articleModelToArticleResponse(articleModel);
     }
+
+    @Override
+    public ArticleResponse updateArticleQuantity(Long articleId, ArticleQuantityRequest articleQuantityRequest) {
+        ArticleModel updatedArticle = articleModelServicePort.updateArticleQuantity(articleId, articleQuantityRequest.getQuantity());
+
+        return articleResponseMapper.articleModelToArticleResponse(updatedArticle);
+    }
+
 
 }
