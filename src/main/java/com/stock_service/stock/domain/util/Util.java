@@ -26,6 +26,7 @@ public class Util {
     public static final String AUTH_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final int TOKEN_PREFIX_LENGTH = 7;
+    public static final String ARTICLE_NOT_FOUND = "El articulo no se encontro";
 
     //Valores
     public static final int ARTICLE_CATEGORIES_MAX_VALUE = 3;
@@ -36,6 +37,7 @@ public class Util {
     public static final int DESCRIPTION_CATEGORY_MAX_VALUE = 90;
     public static final int NAME_MIN_VALUE = 1;
     public static final int NAME_MAX_VALUE = 50;
+
 
     // Private constructor to prevent instantiation
     private Util() {

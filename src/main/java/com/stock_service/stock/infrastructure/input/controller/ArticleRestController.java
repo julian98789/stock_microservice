@@ -85,4 +85,28 @@ public class ArticleRestController {
         logger.info("[Infraestructura] Se obtuvieron {} artículos en la página {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Obtener un artículo por ID",
+            description = "Este endpoint permite obtener un artículo específico por su ID.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artículo obtenido exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ArticleResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleResponse> getArticleById(@PathVariable Long id) {
+        logger.info("[Infraestructura] Recibiendo solicitud para obtener artículo con ID: {}", id);
+        ArticleResponse articleResponse = articleHandler.getArticleById(id);
+        logger.info("[Infraestructura] Artículo encontrado con ID: {}", id);
+        return new ResponseEntity<>(articleResponse, HttpStatus.OK);
+    }
+
 }

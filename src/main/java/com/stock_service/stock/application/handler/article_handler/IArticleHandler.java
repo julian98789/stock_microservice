@@ -8,4 +8,6 @@ public interface IArticleHandler {
 
     ArticleResponse saveArticle(ArticleRequest articleRequest);
     Paginated<ArticleResponse> getArticles(int page, int size, String sort, boolean ascending);
+    ArticleResponse getArticleById(Long id);
+
 }

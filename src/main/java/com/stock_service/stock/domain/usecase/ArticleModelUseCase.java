@@ -2,6 +2,7 @@ package com.stock_service.stock.domain.usecase;
 
 import com.stock_service.stock.domain.api.IArticleModelServicePort;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
+import com.stock_service.stock.domain.exception.NotFoundException;
 import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
@@ -47,6 +48,18 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
         logger.info("[Dominio] Se obtuvieron {} artculos en la pagina {}", article.getContent().size(), page);
         return article;
 
+    }
+
+    @Override
+    public ArticleModel getArticleById(Long id) {
+        logger.info("[Dominio] Recibiendo solicitud para obtener artículo con ID: {}", id);
+        ArticleModel article = articlePersistencePort.getArticleById(id);
+        if (article == null) {
+            logger.warn("[Dominio] No se encontró un artículo con ID: {}", id);
+            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
+        }
+        logger.info("[Dominio] Artículo encontrado con ID: {} y nombre: {}", article.getId(), article.getName());
+        return article;
     }
 
 

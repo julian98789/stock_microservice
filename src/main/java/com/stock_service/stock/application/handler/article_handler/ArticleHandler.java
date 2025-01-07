@@ -84,4 +84,12 @@ public class ArticleHandler implements IArticleHandler {
         );
 
     }
+
+    @Override
+    public ArticleResponse getArticleById(Long id) {
+        logger.info("[Aplicación] Recibiendo solicitud para obtener artículo con ID: {}", id);
+        ArticleModel articleModel = articleModelServicePort.getArticleById(id);
+        return articleResponseMapper.articleModelToArticleResponse(articleModel);
+    }
+
 }

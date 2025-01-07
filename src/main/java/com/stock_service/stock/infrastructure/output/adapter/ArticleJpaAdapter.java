@@ -64,4 +64,12 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
         logger.info("[Infraestructura] No se encontro articulo con el nombre {}", name);
         return articleRepository.findByName(name).isPresent();
     }
+
+    @Override
+    public ArticleModel getArticleById(Long id) {
+        logger.info("[Infraestructura] Buscando artículo con ID: {}", id);
+        return articleRepository.findById(id)
+                .map(articleEntityMapper::articleEntityToArticleModel)
+                .orElse(null);
+    }
 }

@@ -1,6 +1,7 @@
 package com.stock_service.stock.infrastructure.exception.global;
 
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
+import com.stock_service.stock.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NameAlreadyExistsException.class)
     public ResponseEntity<String> nameAlreadyExistsException(NameAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> notFoundException(NotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
