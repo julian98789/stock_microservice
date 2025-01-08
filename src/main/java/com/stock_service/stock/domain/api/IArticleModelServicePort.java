@@ -16,4 +16,6 @@ public interface IArticleModelServicePort {
     boolean isStockAvailable(Long articleId, int requestedQuantity);
 
     void reduceStock(Long articleId, int quantityToReduce);
+
+    Double getArticlePriceById(Long articleId);
 }

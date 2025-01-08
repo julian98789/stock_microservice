@@ -110,5 +110,10 @@ public class ArticleHandler implements IArticleHandler {
         articleModelServicePort.reduceStock(articleId, request.getQuantity());
     }
 
+    @Override
+    public Double getArtclePriceById(Long articleId) {
+        return articleModelServicePort.getArticlePriceById(articleId);
+    }
+
 
 }

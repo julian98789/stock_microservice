@@ -58,12 +58,12 @@ public class ArticleRestController {
     }
 
     @Operation(
-            summary = "Obtener artículos paginados",
-            description = "Este endpoint permite obtener una lista paginada de artículos, con opciones de ordenación y paginación.",
+            summary = "Obtener articulos paginados",
+            description = "Este endpoint permite obtener una lista paginada de articulos, con opciones de ordenación y paginación.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+            @ApiResponse(responseCode = "200", description = "Articulos obtenidos exitosamente",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Paginated.class))),
             @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
@@ -80,10 +80,10 @@ public class ArticleRestController {
             @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
             @RequestParam(defaultValue = "true") boolean ascending) {
 
-        logger.info("[Infraestructura] Recibiendo solicitud para obtener artículos con los siguientes parámetros: página = {}, tamaño = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
+        logger.info("[Infraestructura] Recibiendo solicitud para obtener articulos con los siguientes parámetros: página = {}, tamaño = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         Paginated<ArticleResponse> paginatedResult = articleHandler.getArticles(page, size, sort, ascending);
 
-        logger.info("[Infraestructura] Se obtuvieron {} artículos en la página {}", paginatedResult.getContent().size(), page);
+        logger.info("[Infraestructura] Se obtuvieron {} articulos en la página {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
@@ -109,7 +109,7 @@ public class ArticleRestController {
         logger.info("[Infraestructura] Cantidad del articulo con ID: {} actualizada exitosamente.", articleId);
     }
 
-    @PreAuthorize(Util.ROLE_AUX_BODEGA)
+    @PreAuthorize(Util.ROLE_CLIENTE)
     @GetMapping("/{articleId}/check-quantity/{quantity}")
     public ResponseEntity<Boolean> checkArticleAvailability(
             @PathVariable Long articleId,
@@ -118,12 +118,21 @@ public class ArticleRestController {
         return ResponseEntity.ok(isAvailable);
     }
 
-    @PreAuthorize(Util.ROLE_AUX_BODEGA)
+    @PreAuthorize(Util.ROLE_CLIENTE)
     @PatchMapping("/{articleId}/subtract-stock")
     public void reduceStock(@PathVariable Long articleId,
                             @RequestBody @Valid ArticleQuantityRequest request) {
         articleHandler.reduceStock(articleId, request);
         logger.info("[Infraestructura] Cantidad del articulo con ID: {} reducida exitosamente.", articleId);
+    }
+
+    @PreAuthorize(Util.ROLE_CLIENTE)
+    @GetMapping("/{articleId}/price")
+    public ResponseEntity<Double> getArticlePriceById(
+            @PathVariable Long articleId ){
+
+        Double price = articleHandler.getArtclePriceById(articleId);
+        return ResponseEntity.ok(price);
     }
 
 

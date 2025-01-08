@@ -76,10 +76,8 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
         logger.info("[Dominio] Actualizando cantidad del artículo con ID: {}", id);
 
         ArticleModel article = articlePersistencePort.getArticleById(id);
-        if (article == null) {
-            logger.warn("[Dominio] Artículo con ID: {} no encontrado.", id);
-            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
-        }
+
+        validateArticle(article);
 
         article.setQuantity(quantity);
 
@@ -92,9 +90,7 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
     public boolean isStockAvailable(Long articleId, int requestedQuantity) {
         ArticleModel article = articlePersistencePort.getArticleById(articleId);
 
-        if (article == null) {
-            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
-        }
+        validateArticle(article);
 
         return article.getQuantity() >= requestedQuantity;
     }
@@ -113,7 +109,17 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
 
     }
 
-    private void validateArticle(ArticleEntity article) {
+    @Override
+    public Double getArticlePriceById(Long articleId) {
+        ArticleModel article = articlePersistencePort.getArticleById(articleId);
+
+        validateArticle(article);
+
+        return article.getPrice();
+
+    }
+
+    private void validateArticle(ArticleModel article) {
         if (article == null) {
             throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
         }
