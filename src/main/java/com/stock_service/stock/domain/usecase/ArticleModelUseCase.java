@@ -10,6 +10,8 @@ import com.stock_service.stock.domain.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 
 public class ArticleModelUseCase implements IArticleModelServicePort {
 
@@ -77,6 +79,17 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
         ArticleModel updatedArticle = articlePersistencePort.saveArticle(article);
         logger.info("[Dominio] Artículo actualizado con nueva cantidad: {}", updatedArticle.getQuantity());
         return updatedArticle;
+    }
+
+    @Override
+    public boolean isStockAvailable(Long articleId, int requestedQuantity) {
+        ArticleModel article = articlePersistencePort.getArticleById(articleId);
+
+        if (article == null) {
+            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
+        }
+
+        return article.getQuantity() >= requestedQuantity;
     }
 
 

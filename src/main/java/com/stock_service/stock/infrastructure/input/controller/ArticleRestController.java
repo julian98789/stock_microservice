@@ -124,4 +124,14 @@ public class ArticleRestController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedArticle);
     }
 
+    @PreAuthorize(Util.ROLE_AUX_BODEGA)
+    @GetMapping("/{articleId}/check-quantity/{quantity}")
+    public ResponseEntity<Boolean> checkArticleAvailability(
+            @PathVariable Long articleId,
+            @PathVariable Integer quantity) {
+        boolean isAvailable = articleHandler.CheckAvailabilityArticle(articleId, quantity);
+        return ResponseEntity.ok(isAvailable);
+    }
+
+
 }

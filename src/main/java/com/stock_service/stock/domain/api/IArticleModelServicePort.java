@@ -9,4 +9,5 @@ public interface IArticleModelServicePort {
     Paginated<ArticleModel> getArticles(int page, int size, String sort, boolean ascending);
     ArticleModel getArticleById(Long id);
     ArticleModel updateArticleQuantity(Long id, int quantity);
+    boolean isStockAvailable(Long articleId, int requestedQuantity);
 }

@@ -100,5 +100,10 @@ public class ArticleHandler implements IArticleHandler {
         return articleResponseMapper.articleModelToArticleResponse(updatedArticle);
     }
 
+    @Override
+    public boolean CheckAvailabilityArticle(Long articleId, Integer requestedQuantity) {
+        return articleModelServicePort.isStockAvailable(articleId, requestedQuantity);
+    }
+
 
 }
