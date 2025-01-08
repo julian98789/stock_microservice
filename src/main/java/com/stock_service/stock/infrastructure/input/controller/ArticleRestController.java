@@ -87,41 +87,26 @@ public class ArticleRestController {
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Obtener un artículo por ID",
-            description = "Este endpoint permite obtener un artículo específico por su ID.",
-            tags = {"Article"}
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artículo obtenido exitosamente",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ArticleResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
-                    content = @Content(mediaType = "application/json"))
-    })
+
     @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/{articleId}")
-    public ResponseEntity<ArticleResponse> getArticleById( @PathVariable Long articleId) {
+    public ResponseEntity<Boolean> getArticleById( @PathVariable Long articleId) {
         logger.info("[Infraestructura] Recibiendo solicitud para obtener artículo con ID: {}", articleId);
-        ArticleResponse articleResponse = articleHandler.getArticleById(articleId);
+         boolean articel = articleHandler.getArticleById(articleId);
         logger.info("[Infraestructura] Artículo encontrado con ID: {}", articleId);
-        return new ResponseEntity<>(articleResponse, HttpStatus.OK);
+        return ResponseEntity.ok(articel);
     }
 
 
     @PreAuthorize(Util.ROLE_AUX_BODEGA)
     @PatchMapping("/quantity/{articleId}")
-    public ResponseEntity<ArticleResponse> updateArticleQuantity(
+    public void updateArticleQuantity(
             @PathVariable Long articleId,
             @RequestBody ArticleQuantityRequest articleQuantityRequest) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para actualizar la cantidad del articulo con ID: {}", articleId);
-        ArticleResponse updatedArticle = articleHandler.updateArticleQuantity(articleId, articleQuantityRequest);
-
+        articleHandler.updateArticleQuantity(articleId, articleQuantityRequest);
         logger.info("[Infraestructura] Cantidad del articulo con ID: {} actualizada exitosamente.", articleId);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedArticle);
     }
 
     @PreAuthorize(Util.ROLE_AUX_BODEGA)
@@ -131,6 +116,14 @@ public class ArticleRestController {
             @PathVariable Integer quantity) {
         boolean isAvailable = articleHandler.CheckAvailabilityArticle(articleId, quantity);
         return ResponseEntity.ok(isAvailable);
+    }
+
+    @PreAuthorize(Util.ROLE_AUX_BODEGA)
+    @PatchMapping("/{articleId}/subtract-stock")
+    public void reduceStock(@PathVariable Long articleId,
+                            @RequestBody @Valid ArticleQuantityRequest request) {
+        articleHandler.reduceStock(articleId, request);
+        logger.info("[Infraestructura] Cantidad del articulo con ID: {} reducida exitosamente.", articleId);
     }
 
 

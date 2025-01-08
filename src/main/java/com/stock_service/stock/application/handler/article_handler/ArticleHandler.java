@@ -87,10 +87,10 @@ public class ArticleHandler implements IArticleHandler {
     }
 
     @Override
-    public ArticleResponse getArticleById(Long id) {
+    public boolean getArticleById(Long id) {
         logger.info("[Aplicación] Recibiendo solicitud para obtener artículo con ID: {}", id);
-        ArticleModel articleModel = articleModelServicePort.getArticleById(id);
-        return articleResponseMapper.articleModelToArticleResponse(articleModel);
+        boolean article = articleModelServicePort.getArticleById(id);
+        return article;
     }
 
     @Override
@@ -103,6 +103,11 @@ public class ArticleHandler implements IArticleHandler {
     @Override
     public boolean CheckAvailabilityArticle(Long articleId, Integer requestedQuantity) {
         return articleModelServicePort.isStockAvailable(articleId, requestedQuantity);
+    }
+
+    @Override
+    public void reduceStock(Long articleId, ArticleQuantityRequest request) {
+        articleModelServicePort.reduceStock(articleId, request.getQuantity());
     }
 
 

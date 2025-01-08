@@ -9,8 +9,9 @@ public interface IArticleHandler {
 
     ArticleResponse saveArticle(ArticleRequest articleRequest);
     Paginated<ArticleResponse> getArticles(int page, int size, String sort, boolean ascending);
-    ArticleResponse getArticleById(Long id);
+    boolean getArticleById(Long id);
     ArticleResponse updateArticleQuantity(Long articleId, ArticleQuantityRequest articleQuantityRequest);
     public boolean CheckAvailabilityArticle(Long articleId, Integer requestedQuantity);
+    public void reduceStock(Long articleId, ArticleQuantityRequest request);
 
 }

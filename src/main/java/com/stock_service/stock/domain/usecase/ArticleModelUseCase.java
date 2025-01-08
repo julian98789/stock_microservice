@@ -1,12 +1,14 @@
 package com.stock_service.stock.domain.usecase;
 
 import com.stock_service.stock.domain.api.IArticleModelServicePort;
+import com.stock_service.stock.domain.exception.InsufficientStockException;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.exception.NotFoundException;
 import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
+import com.stock_service.stock.infrastructure.output.entity.ArticleEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,15 +55,20 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
     }
 
     @Override
-    public ArticleModel getArticleById(Long id) {
+    public boolean getArticleById(Long id) {
         logger.info("[Dominio] Recibiendo solicitud para obtener artículo con ID: {}", id);
-        ArticleModel article = articlePersistencePort.getArticleById(id);
-        if (article == null) {
-            logger.warn("[Dominio] No se encontró un artículo con ID: {}", id);
-            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
+        try {
+            ArticleModel article = articlePersistencePort.getArticleById(id);
+            if (article == null) {
+                logger.warn("[Dominio] No se encontró un artículo con ID: {}", id);
+                return false;
+            }
+            logger.info("[Dominio] Artículo encontrado con ID: {} y nombre: {}", article.getId(), article.getName());
+            return true;
+        } catch (Exception e) {
+            logger.error("Error al obtener el artículo con ID: {}", id, e);
+            return false;
         }
-        logger.info("[Dominio] Artículo encontrado con ID: {} y nombre: {}", article.getId(), article.getName());
-        return article;
     }
 
     @Override
@@ -92,5 +99,24 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
         return article.getQuantity() >= requestedQuantity;
     }
 
+    public void reduceStock(Long articleId, int quantityToReduce) {
+
+        ArticleModel article = articlePersistencePort.getArticleById(articleId);
+
+
+        if (article.getQuantity() < quantityToReduce) {
+            throw new InsufficientStockException(Util.INSUFFICIENT_STOCK);
+        }
+
+        articlePersistencePort.reduceArticleQuantity(articleId, quantityToReduce);
+
+
+    }
+
+    private void validateArticle(ArticleEntity article) {
+        if (article == null) {
+            throw new NotFoundException(Util.ARTICLE_NOT_FOUND);
+        }
+    }
 
 }

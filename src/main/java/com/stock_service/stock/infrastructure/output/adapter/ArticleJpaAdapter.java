@@ -1,8 +1,11 @@
 package com.stock_service.stock.infrastructure.output.adapter;
 
+import com.stock_service.stock.domain.exception.InsufficientStockException;
+import com.stock_service.stock.domain.exception.NotFoundException;
 import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
+import com.stock_service.stock.domain.util.Util;
 import com.stock_service.stock.infrastructure.output.entity.ArticleEntity;
 import com.stock_service.stock.infrastructure.output.mapper.IArticleEntityMapper;
 import com.stock_service.stock.infrastructure.output.repository.IArticleRepository;
@@ -71,5 +74,16 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
         return articleRepository.findById(id)
                 .map(articleEntityMapper::articleEntityToArticleModel)
                 .orElse(null);
+    }
+
+    @Override
+    public void reduceArticleQuantity(Long articleId, int quantityToReduce) {
+        ArticleEntity entity = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NotFoundException(Util.ARTICLE_NOT_FOUND));
+
+        int newQuantity = entity.getQuantity() - quantityToReduce;
+
+        entity.setQuantity(newQuantity);
+        articleRepository.save(entity);
     }
 }
