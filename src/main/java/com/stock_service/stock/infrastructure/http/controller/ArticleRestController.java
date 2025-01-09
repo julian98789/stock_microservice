@@ -87,7 +87,20 @@ public class ArticleRestController {
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
-
+    @Operation(
+            summary = "Obtener artículo por ID",
+            description = "Este endpoint permite obtener un artículo por su ID.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artículo obtenido exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Boolean.class))),
+            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/{articleId}")
     public ResponseEntity<Boolean> getArticleById( @PathVariable Long articleId) {
@@ -97,7 +110,19 @@ public class ArticleRestController {
         return ResponseEntity.ok(articel);
     }
 
-
+    @Operation(
+            summary = "Actualizar cantidad del artículo",
+            description = "Este endpoint permite actualizar la cantidad de un artículo.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad del artículo actualizada exitosamente",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_AUX_BODEGA)
     @PatchMapping("/quantity/{articleId}")
     public void updateArticleQuantity(
@@ -109,6 +134,20 @@ public class ArticleRestController {
         logger.info("[Infraestructura] Cantidad del articulo con ID: {} actualizada exitosamente.", articleId);
     }
 
+    @Operation(
+            summary = "Verificar disponibilidad de stock",
+            description = "Este endpoint permite verificar si hay suficiente stock de un artículo.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Stock verificado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Boolean.class))),
+            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_CLIENTE)
     @GetMapping("/{articleId}/check-quantity/{quantity}")
     public ResponseEntity<Boolean> isStockSufficient(
@@ -118,6 +157,19 @@ public class ArticleRestController {
         return ResponseEntity.ok(isAvailable);
     }
 
+    @Operation(
+            summary = "Reducir cantidad del artículo",
+            description = "Este endpoint permite reducir la cantidad de un artículo en el stock.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad del artículo reducida exitosamente",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_CLIENTE)
     @PatchMapping("/{articleId}/subtract-stock")
     public void reduceArticleQuantity(@PathVariable Long articleId,
@@ -126,6 +178,20 @@ public class ArticleRestController {
         logger.info("[Infraestructura] Cantidad del articulo con ID: {} reducida exitosamente.", articleId);
     }
 
+    @Operation(
+            summary = "Obtener precio del artículo por ID",
+            description = "Este endpoint permite obtener el precio de un artículo por su ID.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Precio del artículo obtenido exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Double.class))),
+            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_CLIENTE)
     @GetMapping("/{articleId}/price")
     public ResponseEntity<Double> getArticlePriceById(
