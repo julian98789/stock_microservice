@@ -8,11 +8,9 @@ import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
-import com.stock_service.stock.infrastructure.output.entity.ArticleEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
 
 
 public class ArticleModelUseCase implements IArticleModelServicePort {
