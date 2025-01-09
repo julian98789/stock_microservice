@@ -89,8 +89,8 @@ public class ArticleHandler implements IArticleHandler {
     @Override
     public boolean getArticleById(Long id) {
         logger.info("[Aplicación] Recibiendo solicitud para obtener artículo con ID: {}", id);
-        boolean article = articleModelServicePort.getArticleById(id);
-        return article;
+        return articleModelServicePort.getArticleById(id);
+
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ArticleHandler implements IArticleHandler {
     }
 
     @Override
-    public boolean CheckAvailabilityArticle(Long articleId, Integer requestedQuantity) {
+    public boolean checkAvailabilityArticle(Long articleId, Integer requestedQuantity) {
         return articleModelServicePort.isStockAvailable(articleId, requestedQuantity);
     }
 

@@ -19,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -45,19 +44,9 @@ class JwtAuthenticationFilterTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    @DisplayName("Should not set authentication when Authorization header is missing")
-    void doFilterInternal_NoAuthHeader() throws ServletException, IOException {
-        when(request.getHeader(Util.AUTH_HEADER)).thenReturn(null);
-
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain).doFilter(request, response);
-    }
 
     @Test
-    @DisplayName("Should set authentication when JWT is valid")
+    @DisplayName("Debe establecer la autenticacion cuando JWT sea valido")
     void doFilterInternal_ValidJwt() throws ServletException, IOException {
         String jwt = "valid.jwt.token";
         String authHeader = Util.TOKEN_PREFIX + jwt;

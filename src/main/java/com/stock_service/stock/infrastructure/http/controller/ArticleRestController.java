@@ -114,7 +114,7 @@ public class ArticleRestController {
     public ResponseEntity<Boolean> isStockSufficient(
             @PathVariable Long articleId,
             @PathVariable Integer quantity) {
-        boolean isAvailable = articleHandler.CheckAvailabilityArticle(articleId, quantity);
+        boolean isAvailable = articleHandler.checkAvailabilityArticle(articleId, quantity);
         return ResponseEntity.ok(isAvailable);
     }
 

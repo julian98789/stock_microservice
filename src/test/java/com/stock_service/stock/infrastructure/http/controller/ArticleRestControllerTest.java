@@ -157,14 +157,14 @@ class ArticleRestControllerTest {
     @WithMockUser(roles = "CLIENTE")
     @DisplayName("Debe verificar si el stock es suficiente correctamente")
     void isStockSufficient() throws Exception {
-        when(articleHandler.CheckAvailabilityArticle(anyLong(), anyInt())).thenReturn(true);
+        when(articleHandler.checkAvailabilityArticle(anyLong(), anyInt())).thenReturn(true);
 
         mockMvc.perform(get("/api/article/{articleId}/check-quantity/{quantity}", 1L, 10))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("true"));
 
-        verify(articleHandler, times(1)).CheckAvailabilityArticle(1L, 10);
+        verify(articleHandler, times(1)).checkAvailabilityArticle(1L, 10);
     }
 
     @Test

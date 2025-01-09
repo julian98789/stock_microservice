@@ -169,7 +169,7 @@ class ArticleHandlerTest {
     void checkAvailabilityArticle() {
         when(articleModelServicePort.isStockAvailable(1L, 10)).thenReturn(true);
 
-        boolean result = articleHandler.CheckAvailabilityArticle(1L, 10);
+        boolean result = articleHandler.checkAvailabilityArticle(1L, 10);
 
         assertTrue(result);
         verify(articleModelServicePort, times(1)).isStockAvailable(1L, 10);
