@@ -8,4 +8,7 @@ public interface IArticleModelPersistencePort {
     ArticleModel saveArticle(ArticleModel articleModel);
     Paginated<ArticleModel> getArticles(int page, int size, String sort, boolean ascending);
     boolean existByName(String name);
+    ArticleModel getArticleById(Long id);
+    void reduceArticleQuantity(Long articleId, int quantityToReduce);
+
 }

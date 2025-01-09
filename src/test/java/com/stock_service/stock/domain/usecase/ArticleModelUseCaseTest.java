@@ -83,4 +83,80 @@ class ArticleModelUseCaseTest {
         assertEquals(2, result.getTotalPages());
         verify(articleModelPersistencePort, times(1)).getArticles(page, size, sort, ascending);
     }
+
+    @Test
+    @DisplayName("Debe reducir la cantidad del artículo correctamente")
+    void reduceStock() {
+        Long articleId = 1L;
+        int quantityToReduce = 5;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+        doNothing().when(articleModelPersistencePort).reduceArticleQuantity(articleId, quantityToReduce);
+
+        articleModelUseCase.reduceStock(articleId, quantityToReduce);
+
+        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+        verify(articleModelPersistencePort, times(1)).reduceArticleQuantity(articleId, quantityToReduce);
+    }
+
+    @Test
+    @DisplayName("Debe obtener el precio del artículo por ID correctamente")
+    void getArticlePriceById() {
+        Long articleId = 1L;
+        Double expectedPrice = 100.0;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        Double result = articleModelUseCase.getArticlePriceById(articleId);
+
+        assertNotNull(result);
+        assertEquals(expectedPrice, result);
+        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+    }
+
+    @Test
+    @DisplayName("Debe obtener el artículo por ID correctamente")
+    void getArticleById() {
+        Long articleId = 1L;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        boolean result = articleModelUseCase.getArticleById(articleId);
+
+        assertTrue(result);
+        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+    }
+
+    @Test
+    @DisplayName("Debe actualizar la cantidad del artículo correctamente")
+    void updateArticleQuantity() {
+        Long articleId = 1L;
+        int newQuantity = 20;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+        when(articleModelPersistencePort.saveArticle(articleModel)).thenReturn(articleModel);
+
+        ArticleModel result = articleModelUseCase.updateArticleQuantity(articleId, newQuantity);
+
+        assertNotNull(result);
+        assertEquals(newQuantity, result.getQuantity());
+        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+        verify(articleModelPersistencePort, times(1)).saveArticle(articleModel);
+    }
+
+    @Test
+    @DisplayName("Debe verificar si el stock es suficiente correctamente")
+    void isStockAvailable() {
+        Long articleId = 1L;
+        int requestedQuantity = 5;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        boolean result = articleModelUseCase.isStockAvailable(articleId, requestedQuantity);
+
+        assertTrue(result);
+        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+    }
+
+
 }

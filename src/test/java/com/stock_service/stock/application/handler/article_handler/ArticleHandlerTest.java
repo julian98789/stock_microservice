@@ -1,5 +1,6 @@
 package com.stock_service.stock.application.handler.article_handler;
 
+import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
 import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
@@ -59,7 +60,6 @@ class ArticleHandlerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Inicializar mocks y datos de prueba
         brandModel = new BrandModel(1L, "Samsung", "Samsung Electronics");
         categoryModels = Arrays.asList(
                 new CategoryModel(1L, "Smartphones", "Phones and Accessories"),
@@ -82,14 +82,13 @@ class ArticleHandlerTest {
 
     @Test
     void saveArticle() {
-        // Ejecutar método
+
         ArticleResponse result = articleHandler.saveArticle(articleRequest);
 
-        // Verificar resultados
         assertNotNull(result);
         assertEquals(articleResponse, result);
 
-        // Verificar interacciones con los mocks
+
         verify(articleRequestMapper).articleRequestToArticleModel(articleRequest);
         verify(brandModelPersistencePort).getBrandById(1L);
         verify(categoryModelPersistencePort).getCategoriesByIds(List.of(1L, 2L));
@@ -134,5 +133,70 @@ class ArticleHandlerTest {
 
         verify(articleModelPersistencePort, times(1)).getArticles(page, size, sort, ascending);
         verify(articleResponseMapper, times(1)).articleModelToArticleResponse(articleModel);
+    }
+
+    @Test
+    @DisplayName("Debe obtener el artículo por ID correctamente")
+    void getArticleById() {
+        when(articleModelServicePort.getArticleById(1L)).thenReturn(true);
+
+        boolean result = articleHandler.getArticleById(1L);
+
+        assertTrue(result);
+        verify(articleModelServicePort, times(1)).getArticleById(1L);
+    }
+
+    @Test
+    @DisplayName("Debe actualizar la cantidad del artículo correctamente")
+    void updateArticleQuantity() {
+        ArticleQuantityRequest request = new ArticleQuantityRequest();
+        request.setQuantity(5);
+
+        ArticleModel updatedArticle = new ArticleModel(1L, "Galaxy S23", "Latest Samsung smartphone", 105, 999.99, brandModel, categoryModels);
+        when(articleModelServicePort.updateArticleQuantity(1L, 5)).thenReturn(updatedArticle);
+        when(articleResponseMapper.articleModelToArticleResponse(updatedArticle)).thenReturn(articleResponse);
+
+        ArticleResponse result = articleHandler.updateArticleQuantity(1L, request);
+
+        assertNotNull(result);
+        assertEquals(articleResponse, result);
+        verify(articleModelServicePort, times(1)).updateArticleQuantity(1L, 5);
+        verify(articleResponseMapper, times(1)).articleModelToArticleResponse(updatedArticle);
+    }
+
+    @Test
+    @DisplayName("Debe verificar si el stock es suficiente correctamente")
+    void checkAvailabilityArticle() {
+        when(articleModelServicePort.isStockAvailable(1L, 10)).thenReturn(true);
+
+        boolean result = articleHandler.checkAvailabilityArticle(1L, 10);
+
+        assertTrue(result);
+        verify(articleModelServicePort, times(1)).isStockAvailable(1L, 10);
+    }
+
+    @Test
+    @DisplayName("Debe reducir la cantidad del artículo correctamente")
+    void reduceStock() {
+        ArticleQuantityRequest request = new ArticleQuantityRequest();
+        request.setQuantity(5);
+
+        doNothing().when(articleModelServicePort).reduceStock(1L, 5);
+
+        articleHandler.reduceStock(1L, request);
+
+        verify(articleModelServicePort, times(1)).reduceStock(1L, 5);
+    }
+
+    @Test
+    @DisplayName("Debe obtener el precio del artículo por ID correctamente")
+    void getArticlePriceById() {
+        when(articleModelServicePort.getArticlePriceById(1L)).thenReturn(100.0);
+
+        Double result = articleHandler.getArtclePriceById(1L);
+
+        assertNotNull(result);
+        assertEquals(100.0, result);
+        verify(articleModelServicePort, times(1)).getArticlePriceById(1L);
     }
 }

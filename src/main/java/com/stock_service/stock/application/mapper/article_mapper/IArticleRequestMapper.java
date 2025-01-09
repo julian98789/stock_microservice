@@ -14,4 +14,5 @@ public interface IArticleRequestMapper {
     @Mapping(target = "categories", ignore = true)
     @Mapping(target = "brand", ignore = true)
     ArticleModel articleRequestToArticleModel(ArticleRequest articleRequest);
+
 }

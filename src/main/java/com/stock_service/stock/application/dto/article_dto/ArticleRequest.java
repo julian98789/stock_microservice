@@ -21,6 +21,7 @@ public class ArticleRequest {
     @Size(min = Util.DESCRIPTION_MIN_VALUE, max = Util.DESCRIPTION_ARTICLE_MAX_VALUE, message = Util.DESCRIPTION_ARTICLE_SIZE)
     private String description;
 
+    @NotNull(message = Util.ARTICLE_QUANTITY_REQUIRED)
     @Min(value = Util.ARTICLE_QUANTITY_MIN_VALUE, message = Util.ARTICLE_QUANTITY_MIN)
     private int quantity;
 

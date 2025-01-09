@@ -11,8 +11,9 @@ public class Util {
     public static final String BRAND_NAME_ALREADY_EXISTS = "La marca ya existe";
     public static final String ARTICLE_NAME_ALREADY_EXISTS = "El articulo ya existe";
     public static final String DESCRIPTION_ARTICLE_SIZE = "El tamaño debe estar entre 1 y 120 caracteres.";
-    public static final String ARTICLE_QUANTITY_MIN = "La cantidad mínima es 1.";
+    public static final String ARTICLE_QUANTITY_MIN = "La cantidad mínima es 0.";
     public static final String ARTICLE_PRICE_REQUIRED = "El precio es obligatorio.";
+    public static final String ARTICLE_QUANTITY_REQUIRED = "La catidad del articulo es obligatorio.";
     public static final String ARTICLE_PRICE_MIN_VALUE = "0.0";
     public static final String ARTICLE_PRICE_MIN = "El precio debe ser mayor que 0.";
     public static final String ARTICLE_BRAND_ID_REQUIRED = "El id de la marca es obligatorio.";
@@ -25,17 +26,22 @@ public class Util {
     public static final String CLAIM_AUTHORITIES = "authorities";
     public static final String AUTH_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
-    public static final int TOKEN_PREFIX_LENGTH = 7;
+    public static final String ARTICLE_NOT_FOUND = "El articulo no se encontro";
+    public static final String INSUFFICIENT_STOCK = "Stock insuficiente";
+    public static final String INVALID_CREDENTIALS = "Credenciales no validas";
 
     //Valores
     public static final int ARTICLE_CATEGORIES_MAX_VALUE = 3;
     public static final int ARTICLE_CATEGORIES_MIN_VALUE = 1;
-    public static final int ARTICLE_QUANTITY_MIN_VALUE = 1;
+    public static final int ARTICLE_QUANTITY_MIN_VALUE = 0;
     public static final int DESCRIPTION_ARTICLE_MAX_VALUE = 120;
     public static final int DESCRIPTION_MIN_VALUE = 1;
     public static final int DESCRIPTION_CATEGORY_MAX_VALUE = 90;
     public static final int NAME_MIN_VALUE = 1;
     public static final int NAME_MAX_VALUE = 50;
+    public static final int TOKEN_PREFIX_LENGTH = 7;
+
+
 
     // Private constructor to prevent instantiation
     private Util() {
