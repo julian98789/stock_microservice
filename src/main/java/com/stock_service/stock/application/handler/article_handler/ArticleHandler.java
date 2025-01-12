@@ -89,7 +89,7 @@ public class ArticleHandler implements IArticleHandler {
     @Override
     public boolean getArticleById(Long id) {
         logger.info("[Aplicación] Recibiendo solicitud para obtener artículo con ID: {}", id);
-        return articleModelServicePort.getArticleById(id);
+        return articleModelServicePort.existsArticleById(id);
 
     }
 

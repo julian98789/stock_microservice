@@ -82,4 +82,6 @@ public class CategoryJpaAdapter implements ICategoryModelPersistencePort {
         logger.info("[Infraestructura] Se han mapeado {} entidades a modelos de categoria", categoryModels.size());
         return categoryModels;
     }
+
+
 }

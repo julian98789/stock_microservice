@@ -53,7 +53,7 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
     }
 
     @Override
-    public boolean getArticleById(Long id) {
+    public boolean existsArticleById(Long id) {
         logger.info("[Dominio] Recibiendo solicitud para obtener artículo con ID: {}", id);
         try {
             ArticleModel article = articlePersistencePort.getArticleById(id);
@@ -104,7 +104,6 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
 
         articlePersistencePort.reduceArticleQuantity(articleId, quantityToReduce);
 
-
     }
 
     @Override
@@ -115,6 +114,11 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
 
         return article.getPrice();
 
+    }
+
+    @Override
+    public ArticleModel getArticleById(Long id) {
+        return articlePersistencePort.getArticleById(id);
     }
 
     private void validateArticle(ArticleModel article) {

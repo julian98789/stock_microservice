@@ -55,4 +55,9 @@ public class CategoryHandler implements ICategoryHandler {
                 categories.getTotalPages()
         );
     }
+
+    @Override
+    public List<String> getCategoryNamesByArticleId(Long articleId) {
+        return categoryModelServicePort.getCategoryNamesByArticleId(articleId);
+    }
 }

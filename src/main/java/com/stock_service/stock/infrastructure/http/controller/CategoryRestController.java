@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
@@ -84,5 +86,11 @@ public class CategoryRestController {
 
         logger.info("[Infraestructura] Se obtuvieron {} categorias en la pagina {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
+    }
+
+    @GetMapping("/names-by-article/{articleId}")
+    public ResponseEntity<List<String>> getCategoryNamesByArticleId(@PathVariable Long articleId) {
+        List<String> categoryNames = categoryHandler.getCategoryNamesByArticleId(articleId);
+        return new ResponseEntity<>(categoryNames, HttpStatus.OK);
     }
 }

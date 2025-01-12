@@ -138,12 +138,12 @@ class ArticleHandlerTest {
     @Test
     @DisplayName("Debe obtener el artículo por ID correctamente")
     void getArticleById() {
-        when(articleModelServicePort.getArticleById(1L)).thenReturn(true);
+        when(articleModelServicePort.existsArticleById(1L)).thenReturn(true);
 
         boolean result = articleHandler.getArticleById(1L);
 
         assertTrue(result);
-        verify(articleModelServicePort, times(1)).getArticleById(1L);
+        verify(articleModelServicePort, times(1)).existsArticleById(1L);
     }
 
     @Test

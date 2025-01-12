@@ -10,4 +10,6 @@ public interface ICategoryModelPersistencePort {
     CategoryModel saveCategory(CategoryModel categoryModel);
     Paginated<CategoryModel> getCategories(int page, int size, String sort, boolean ascending); // Actualización aquí
     List<CategoryModel> getCategoriesByIds(List<Long> ids);
+
+
 }

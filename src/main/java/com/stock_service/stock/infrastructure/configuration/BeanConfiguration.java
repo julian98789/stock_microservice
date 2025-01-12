@@ -39,8 +39,19 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ICategoryModelServicePort categoryModelServicePort(){
-        return new CategoryModelUseCase(categoryModelPersistencePort());
+    public IArticleModelPersistencePort articleModelPersistencePort() {
+        return new ArticleJpaAdapter(articleRepository, articleEntityMapper);
+    }
+
+    @Bean
+    public IArticleModelServicePort iArticleServicePort(IArticleModelPersistencePort articleModelPersistencePort) {
+        return new ArticleModelUseCase(articleModelPersistencePort);
+    }
+
+    @Bean
+    public ICategoryModelServicePort categoryModelServicePort() {
+        // Aquí inyectamos correctamente IArticleModelServicePort
+        return new CategoryModelUseCase(categoryModelPersistencePort(), iArticleServicePort(articleModelPersistencePort()));
     }
 
     @Bean
@@ -49,18 +60,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    IBrandModelServicePort brandModelServicePort(){
+    public IBrandModelServicePort brandModelServicePort(){
         return new BrandModelUseCase(brandModelPersistencePort());
     }
-
-    @Bean
-    public IArticleModelPersistencePort iArticlePersistencePort() {
-        return new ArticleJpaAdapter (articleRepository,articleEntityMapper);
-    }
-
-    @Bean
-    public IArticleModelServicePort iArticleServicePort(IArticleModelPersistencePort iArticlePersistencePort) {
-        return new ArticleModelUseCase(iArticlePersistencePort);
-    }
-
 }

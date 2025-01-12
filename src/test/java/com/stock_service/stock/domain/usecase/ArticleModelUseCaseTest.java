@@ -116,12 +116,12 @@ class ArticleModelUseCaseTest {
 
     @Test
     @DisplayName("Debe obtener el artículo por ID correctamente")
-    void getArticleById() {
+    void existsArticleById() {
         Long articleId = 1L;
 
         when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
 
-        boolean result = articleModelUseCase.getArticleById(articleId);
+        boolean result = articleModelUseCase.existsArticleById(articleId);
 
         assertTrue(result);
         verify(articleModelPersistencePort, times(1)).getArticleById(articleId);

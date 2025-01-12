@@ -26,9 +26,8 @@ public class Util {
     public static final String CLAIM_AUTHORITIES = "authorities";
     public static final String AUTH_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String ARTICLE_NOT_FOUND = "El articulo no se encontro";
+    public static final String ARTICLE_NOT_FOUND = "El ID del articulo no se encontro";
     public static final String INSUFFICIENT_STOCK = "Stock insuficiente";
-    public static final String INVALID_CREDENTIALS = "Credenciales no validas";
 
     //Valores
     public static final int ARTICLE_CATEGORIES_MAX_VALUE = 3;
