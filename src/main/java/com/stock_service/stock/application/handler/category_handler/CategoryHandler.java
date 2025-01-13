@@ -41,7 +41,7 @@ public class CategoryHandler implements ICategoryHandler {
     @Override
     public Paginated<CategoryResponse> getCategories(int page, int size, String sort, boolean ascending) {
         logger.info("[Aplicacion] Recibiendo solicitud para obtener categorias desde Controller con parámetros - Página: {}, Tamaño: {}, Orden: {}, Ascendente: {}", page, size, sort, ascending);
-        Paginated<CategoryModel> categories = categoryModelServicePort.getCategories(page, size, sort, ascending);
+        Paginated<CategoryModel> categories = categoryModelServicePort.getCategoriesPaginated(page, size, sort, ascending);
 
         List<CategoryResponse> categoryResponse = categories.getContent().stream()
                 .map(categoryResponseMapper::categoryModelToCategoryResponse)

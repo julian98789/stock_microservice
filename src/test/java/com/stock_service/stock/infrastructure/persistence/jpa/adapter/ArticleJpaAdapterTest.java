@@ -93,7 +93,7 @@ class ArticleJpaAdapterTest {
 
     @Test
     @DisplayName("Debe devolver artículos paginados correctamente")
-    void getArticles() {
+    void getArticlesPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -106,7 +106,7 @@ class ArticleJpaAdapterTest {
         when(articleRepository.findAll(pageRequest)).thenReturn(articleEntities);
         when(articleEntityMapper.articleEntityToArticleModel(articleEntity)).thenReturn(articleModel);
 
-        Paginated<ArticleModel> result = articleJpaAdapter.getArticles(page, size, sort, ascending);
+        Paginated<ArticleModel> result = articleJpaAdapter.getArticlesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());

@@ -49,7 +49,7 @@ public class CategoryJpaAdapter implements ICategoryModelPersistencePort {
     }
 
     @Override
-    public Paginated<CategoryModel> getCategories(int page, int size, String sort, boolean ascending) {
+    public Paginated<CategoryModel> getCategoriesPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         PageRequest pageRequest = PageRequest.of(page, size, ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sort);

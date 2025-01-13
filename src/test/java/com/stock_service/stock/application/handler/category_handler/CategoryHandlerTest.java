@@ -83,7 +83,7 @@ class CategoryHandlerTest {
         categoryResponse.setDescription("Various books");
         paginatedCategoryModel = new Paginated<>(List.of(categoryModel), page, size, 1);
 
-        when(categoryModelServicePort.getCategories(page, size, sort, ascending)).thenReturn(paginatedCategoryModel);
+        when(categoryModelServicePort.getCategoriesPaginated(page, size, sort, ascending)).thenReturn(paginatedCategoryModel);
         when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
 
         Paginated<CategoryResponse> result = categoryHandler.getCategories(page, size, sort, ascending);
@@ -95,7 +95,7 @@ class CategoryHandlerTest {
         assertEquals(size, result.getPageSize());
         assertEquals(1, result.getTotalPages());
 
-        verify(categoryModelServicePort, times(1)).getCategories(page, size, sort, ascending);
+        verify(categoryModelServicePort, times(1)).getCategoriesPaginated(page, size, sort, ascending);
         verify(categoryResponseMapper, times(1)).categoryModelToCategoryResponse(categoryModel);
     }
 }

@@ -108,7 +108,7 @@ class ArticleRestControllerTest {
         ArticleResponse articleResponse = new ArticleResponse();
         Paginated<ArticleResponse> paginatedResponse = new Paginated<>(List.of(articleResponse), page, size, 1);
 
-        when(articleHandler.getArticles(page, size, sort, ascending)).thenReturn(paginatedResponse);
+        when(articleHandler.getArticlesPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
 
         mockMvc.perform(get("/api/article/listar")
                         .param("page", String.valueOf(page))
@@ -119,7 +119,7 @@ class ArticleRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(articleHandler, times(1)).getArticles(page, size, sort, ascending);
+        verify(articleHandler, times(1)).getArticlesPaginated(page, size, sort, ascending);
     }
 
     @Test

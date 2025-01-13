@@ -44,10 +44,10 @@ public class CategoryModelUseCase implements ICategoryModelServicePort {
 
 
     @Override
-    public Paginated<CategoryModel> getCategories(int page, int size, String sort, boolean ascending) {
+    public Paginated<CategoryModel> getCategoriesPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Dominio] Recibiendo solicitud para obtener categorias con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<CategoryModel> categories = categoryModelPersistencePort.getCategories(page, size, sort, ascending);
+        Paginated<CategoryModel> categories = categoryModelPersistencePort.getCategoriesPaginated(page, size, sort, ascending);
 
         logger.info("[Dominio] Se obtuvieron {} categorias en la pagina {}", categories.getContent().size(), page);
         return categories;

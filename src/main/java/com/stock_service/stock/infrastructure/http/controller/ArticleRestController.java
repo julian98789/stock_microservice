@@ -3,6 +3,7 @@ package com.stock_service.stock.infrastructure.http.controller;
 import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
+import com.stock_service.stock.application.dto.article_dto.ArticletCartRequest;
 import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
@@ -81,7 +82,7 @@ public class ArticleRestController {
             @RequestParam(defaultValue = "true") boolean ascending) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para obtener articulos con los siguientes parámetros: página = {}, tamaño = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<ArticleResponse> paginatedResult = articleHandler.getArticles(page, size, sort, ascending);
+        Paginated<ArticleResponse> paginatedResult = articleHandler.getArticlesPaginated(page, size, sort, ascending);
 
         logger.info("[Infraestructura] Se obtuvieron {} articulos en la página {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
@@ -199,6 +200,25 @@ public class ArticleRestController {
 
         Double price = articleHandler.getArtclePriceById(articleId);
         return ResponseEntity.ok(price);
+    }
+
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @GetMapping("/article-cart")
+    public ResponseEntity<Paginated<ArticleResponse>> getAllArticlesPaginatedByIds(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
+            @RequestParam(defaultValue = "true") boolean ascending,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String brandName,
+            @RequestBody @Valid ArticletCartRequest articletCartRequest) {
+
+        Paginated<ArticleResponse> paginatedResult = articleHandler.getAllArticlesPaginatedByIds(
+                page, size, sort, ascending, categoryName, brandName, articletCartRequest.getArticleIds());
+
+        return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
+
+
     }
 
 

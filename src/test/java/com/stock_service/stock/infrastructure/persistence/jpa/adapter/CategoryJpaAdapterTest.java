@@ -87,7 +87,7 @@ class CategoryJpaAdapterTest {
 
     @Test
     @DisplayName("Debe devolver categorías paginadas correctamente")
-    void getCategories() {
+    void getCategoriesPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -100,7 +100,7 @@ class CategoryJpaAdapterTest {
         when(categoryRepository.findAll(pageRequest)).thenReturn(categoryEntities);
         when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntity)).thenReturn(categoryModel);
 
-        Paginated<CategoryModel> result = categoryJpaAdapter.getCategories(page, size, sort, ascending);
+        Paginated<CategoryModel> result = categoryJpaAdapter.getCategoriesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -115,7 +115,7 @@ class CategoryJpaAdapterTest {
 
     @Test
     @DisplayName("Debe recuperar categorías por IDs correctamente")
-    void getCategoriesByIds() {
+    void getCategoriesPaginatedByIds() {
         List<Long> ids = List.of(1L, 2L);
         List<CategoryEntity> categoryEntities = List.of(categoryEntity, new CategoryEntity());
         List<CategoryModel> categoryModels = List.of(categoryModel, new CategoryModel(2L, "Books", "Books and novels"));

@@ -8,6 +8,6 @@ public interface IBrandModelPersistencePort {
 
     boolean existsByName(String name);
 
-    Paginated<BrandModel> getBrands(int page, int size, String sort, boolean ascending);
+    Paginated<BrandModel> getBrandsPaginated(int page, int size, String sort, boolean ascending);
     BrandModel getBrandById(Long id);
 }

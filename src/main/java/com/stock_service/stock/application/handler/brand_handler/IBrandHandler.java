@@ -6,5 +6,5 @@ import com.stock_service.stock.domain.util.Paginated;
 
 public interface IBrandHandler {
     BrandResponse saveBrand(BrandRequest brandRequest);
-    Paginated<BrandResponse> getBrands(int page, int size, String sort, boolean ascending);
+    Paginated<BrandResponse> getBrandsPaginated(int page, int size, String sort, boolean ascending);
 }

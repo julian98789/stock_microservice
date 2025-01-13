@@ -56,7 +56,7 @@ class CategoryModelUseCaseTest {
 
     @Test
     @DisplayName("Deberían devolverse las categorías paginadas correctamente")
-    void getCategories() {
+    void getCategoriesPaginated() {
         int page = 1;
         int size = 5;
         String sort = "name";
@@ -68,9 +68,9 @@ class CategoryModelUseCaseTest {
         List<CategoryModel> categoryList = Arrays.asList(categoryModel1, categoryModel2);
         Paginated<CategoryModel> paginatedResponse = new Paginated<>(categoryList, page, size, 10);
 
-        when(categoryModelPersistencePort.getCategories(page, size, sort, ascending)).thenReturn(paginatedResponse);
+        when(categoryModelPersistencePort.getCategoriesPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
 
-        Paginated<CategoryModel>  result = categoryModelUseCase.getCategories(page, size, sort, ascending);
+        Paginated<CategoryModel>  result = categoryModelUseCase.getCategoriesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
@@ -79,7 +79,7 @@ class CategoryModelUseCaseTest {
         assertEquals(10, result.getTotalElements());
         assertEquals(2, result.getTotalPages());
 
-        verify(categoryModelPersistencePort, times(1)).getCategories(page, size, sort, ascending);
+        verify(categoryModelPersistencePort, times(1)).getCategoriesPaginated(page, size, sort, ascending);
 
     }
 }

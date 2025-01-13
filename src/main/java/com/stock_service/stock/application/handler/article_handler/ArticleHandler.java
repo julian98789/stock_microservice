@@ -57,10 +57,10 @@ public class ArticleHandler implements IArticleHandler {
     }
 
     @Override
-    public Paginated<ArticleResponse> getArticles(int page, int size, String sort, boolean ascending) {
+    public Paginated<ArticleResponse> getArticlesPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Aplicacion] Recibiendo solicitud para obtener articulos desde Controller con parametros - Pagina: {}, Tamaño: {}, Orden: {}, Ascendente: {}", page, size, sort, ascending);
-        Paginated<ArticleModel> paginatedArticle = articleModelPersistencePort.getArticles(page, size, sort, ascending);
+        Paginated<ArticleModel> paginatedArticle = articleModelPersistencePort.getArticlesPaginated(page, size, sort, ascending);
 
         List<ArticleResponse> articleResponses = paginatedArticle.getContent().stream()
                 .map(article -> {
@@ -113,6 +113,30 @@ public class ArticleHandler implements IArticleHandler {
     @Override
     public Double getArtclePriceById(Long articleId) {
         return articleModelServicePort.getArticlePriceById(articleId);
+    }
+
+    @Override
+    public Paginated<ArticleResponse> getAllArticlesPaginatedByIds(int page, int size, String sort, boolean ascending, String categoryName, String brandName, List<Long> articleIds) {
+
+        Paginated<ArticleModel> paginatedArticles = articleModelPersistencePort.getArticlesPaginatedByFilters(
+                page, size, sort, ascending, categoryName, brandName, articleIds);
+
+        List<ArticleResponse> articleResponses = paginatedArticles.getContent().stream()
+                .map(article -> {
+                    ArticleResponse articleResponse = articleResponseMapper.articleModelToArticleResponse(article);
+                    List<CategoryResponseForArticle> sortedCategories = articleResponse.getCategories().stream()
+                            .sorted(Comparator.comparing(CategoryResponseForArticle::getName)).toList();
+                    articleResponse.setCategories(sortedCategories);
+                    return articleResponse;
+                }).toList();
+
+        logger.info("[Aplicación] Mapeo completado, total artículos procesados: {}", articleResponses.size());
+        return new Paginated<>(
+                articleResponses,
+                paginatedArticles.getPageNumber(),
+                paginatedArticles.getPageSize(),
+                paginatedArticles.getTotalElements()
+        );
     }
 
 

@@ -6,11 +6,9 @@ import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.exception.NotFoundException;
 import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
-import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 public class ArticleModelUseCase implements IArticleModelServicePort {
@@ -41,16 +39,6 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
         return savedArticle;
     }
 
-    @Override
-    public Paginated<ArticleModel> getArticles(int page, int size, String sort, boolean ascending) {
-
-        logger.info("[Dominio] Recibiendo solicitud para obtener articulos con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<ArticleModel> article = articlePersistencePort.getArticles(page, size, sort, ascending);
-
-        logger.info("[Dominio] Se obtuvieron {} artculos en la pagina {}", article.getContent().size(), page);
-        return article;
-
-    }
 
     @Override
     public boolean existsArticleById(Long id) {

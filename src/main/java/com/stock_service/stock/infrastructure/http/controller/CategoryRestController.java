@@ -88,9 +88,12 @@ public class CategoryRestController {
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/names-by-article/{articleId}")
     public ResponseEntity<List<String>> getCategoryNamesByArticleId(@PathVariable Long articleId) {
         List<String> categoryNames = categoryHandler.getCategoryNamesByArticleId(articleId);
         return new ResponseEntity<>(categoryNames, HttpStatus.OK);
     }
+
+
 }

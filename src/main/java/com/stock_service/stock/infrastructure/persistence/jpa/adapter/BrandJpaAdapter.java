@@ -48,7 +48,7 @@ public class BrandJpaAdapter implements IBrandModelPersistencePort {
     }
 
     @Override
-    public Paginated<BrandModel> getBrands(int page, int size, String sort, boolean ascending) {
+    public Paginated<BrandModel> getBrandsPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para obtener marcas con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         PageRequest pageRequest = PageRequest.of(page, size, ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sort);

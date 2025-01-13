@@ -56,7 +56,7 @@ class ArticleModelUseCaseTest {
 
     @Test
     @DisplayName("Deberían devolverse los artículos paginados correctamente")
-    void getArticles() {
+    void getArticlesPaginated() {
         int page = 1;
         int size = 5;
         String sort = "name";
@@ -71,9 +71,9 @@ class ArticleModelUseCaseTest {
         List<ArticleModel> articleList = Arrays.asList(article1, article2);
         Paginated<ArticleModel> paginatedResponse = new Paginated<>(articleList, page, size, 10);
 
-        when(articleModelPersistencePort.getArticles(page, size, sort, ascending)).thenReturn(paginatedResponse);
+        when(articleModelPersistencePort.getArticlesPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
 
-        Paginated<ArticleModel> result = articleModelUseCase.getArticles(page, size, sort, ascending);
+        Paginated<ArticleModel> result = articleModelUseCase.getArticlesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
@@ -81,7 +81,7 @@ class ArticleModelUseCaseTest {
         assertEquals(5, result.getPageSize());
         assertEquals(10, result.getTotalElements());
         assertEquals(2, result.getTotalPages());
-        verify(articleModelPersistencePort, times(1)).getArticles(page, size, sort, ascending);
+        verify(articleModelPersistencePort, times(1)).getArticlesPaginated(page, size, sort, ascending);
     }
 
     @Test
