@@ -25,7 +25,5 @@ public interface IArticleHandler {
     Paginated<ArticleResponse> getAllArticlesPaginatedByIds(
             int page, int size, String sort, boolean ascending, String categoryName, String brandName, List<Long> articleIds);
 
-
-
-
-    }
+    List<ArticleResponse> getAllArticlesByIds(List<Long> articleIds);
+}

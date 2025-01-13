@@ -21,4 +21,7 @@ public interface IArticleModelServicePort {
 
     ArticleModel getArticleById(Long id);
 
+    List<ArticleModel> getAllArticlesByIds(List<Long> articleIds);
+
+
     }

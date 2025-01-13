@@ -3,7 +3,7 @@ package com.stock_service.stock.infrastructure.http.controller;
 import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
-import com.stock_service.stock.application.dto.article_dto.ArticletCartRequest;
+import com.stock_service.stock.application.dto.article_dto.ArticleCartRequest;
 import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/article")
@@ -211,14 +213,19 @@ public class ArticleRestController {
             @RequestParam(defaultValue = "true") boolean ascending,
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String brandName,
-            @RequestBody @Valid ArticletCartRequest articletCartRequest) {
+            @RequestBody @Valid ArticleCartRequest articleCartRequest) {
 
         Paginated<ArticleResponse> paginatedResult = articleHandler.getAllArticlesPaginatedByIds(
-                page, size, sort, ascending, categoryName, brandName, articletCartRequest.getArticleIds());
+                page, size, sort, ascending, categoryName, brandName, articleCartRequest.getArticleIds());
 
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
+    }
 
-
+    @PreAuthorize(Util.ROLE_CLIENTE)
+    @GetMapping("/get-all-articles")
+    public ResponseEntity<List<ArticleResponse>> getAllArticles(@RequestBody ArticleCartRequest articleCartRequest) {
+        List<ArticleResponse> articleResponses = articleHandler.getAllArticlesByIds(articleCartRequest.getArticleIds());
+        return ResponseEntity.ok(articleResponses);
     }
 
 

@@ -139,5 +139,13 @@ public class ArticleHandler implements IArticleHandler {
         );
     }
 
+    @Override
+    public List<ArticleResponse> getAllArticlesByIds(List<Long> articleIds) {
+        List<ArticleModel> articles = articleModelServicePort.getAllArticlesByIds(articleIds);
+        return articles.stream()
+                .map(articleResponseMapper::articleModelToArticleResponse)
+                .toList();
+    }
+
 
 }

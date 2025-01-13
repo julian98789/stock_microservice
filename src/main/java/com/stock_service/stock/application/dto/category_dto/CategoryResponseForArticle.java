@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class CategoryResponseForArticle {
     Long id;
-    private String name;
+    String name;
 }

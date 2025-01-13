@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticletCartRequest {
+public class ArticleCartRequest {
     private List<Long> articleIds;
 }

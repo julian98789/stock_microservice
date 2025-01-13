@@ -111,4 +111,10 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
         );
     }
 
+    @Override
+    public List<ArticleModel> getAllArticlesByIds(List<Long> articleIds) {
+        List<ArticleEntity> articleEntities = articleRepository.findAllById(articleIds);
+        return articleEntityMapper.toArticleModelList(articleEntities);
+    }
+
 }

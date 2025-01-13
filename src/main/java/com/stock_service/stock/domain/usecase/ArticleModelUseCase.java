@@ -10,6 +10,8 @@ import com.stock_service.stock.domain.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 
 public class ArticleModelUseCase implements IArticleModelServicePort {
 
@@ -107,6 +109,11 @@ public class ArticleModelUseCase implements IArticleModelServicePort {
     @Override
     public ArticleModel getArticleById(Long id) {
         return articlePersistencePort.getArticleById(id);
+    }
+
+    @Override
+    public List<ArticleModel> getAllArticlesByIds(List<Long> articleIds) {
+        return articlePersistencePort.getAllArticlesByIds(articleIds);
     }
 
     private void validateArticle(ArticleModel article) {

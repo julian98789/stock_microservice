@@ -14,4 +14,6 @@ public interface IArticleModelPersistencePort {
     void reduceArticleQuantity(Long articleId, int quantityToReduce);
     Paginated<ArticleModel> getArticlesPaginatedByFilters(
             int page, int size, String sort, boolean ascending, String categoryName, String brandName, List<Long> articleIds);
+
+    List<ArticleModel> getAllArticlesByIds(List<Long> articleIds);
 }
