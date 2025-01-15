@@ -97,4 +97,21 @@ class CategoryRestControllerTest {
         verify(categoryHandler, times(1)).getCategories(page, size, sort, ascending);
     }
 
+    @Test
+    @WithMockUser(roles = {"ADMIN", "CLIENTE", "AUX_BODEGA"})
+    @DisplayName("Debe devolver nombres de categorías por ID de artículo correctamente")
+    void getCategoryNamesByArticleId() throws Exception {
+        Long articleId = 1L;
+        List<String> categoryNames = List.of("Electronics", "Home Appliances");
+
+        when(categoryHandler.getCategoryNamesByArticleId(articleId)).thenReturn(categoryNames);
+
+        mockMvc.perform(get("/api/category/names-by-article/{articleId}", articleId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(categoryHandler, times(1)).getCategoryNamesByArticleId(articleId);
+    }
+
 }

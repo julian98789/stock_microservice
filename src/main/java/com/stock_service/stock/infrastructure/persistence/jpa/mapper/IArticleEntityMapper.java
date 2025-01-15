@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
@@ -19,4 +21,6 @@ public interface IArticleEntityMapper {
     @Mapping(target = "brand", source = "brand")
     @Mapping(target = "categories", source = "categories")
     ArticleModel articleEntityToArticleModel(ArticleEntity articleEntity);
+
+    List<ArticleModel> toArticleModelList(List<ArticleEntity> articleEntities);
 }

@@ -98,7 +98,7 @@ class ArticleHandlerTest {
 
     @Test
     @DisplayName("Debe devolver artículos paginados correctamente")
-    void getArticles() {
+    void getArticlesPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -119,10 +119,10 @@ class ArticleHandlerTest {
 
         Paginated<ArticleModel> paginatedArticleModel = new Paginated<>(List.of(articleModel), page, size, 1);
 
-        when(articleModelPersistencePort.getArticles(page, size, sort, ascending)).thenReturn(paginatedArticleModel);
+        when(articleModelPersistencePort.getArticlesPaginated(page, size, sort, ascending)).thenReturn(paginatedArticleModel);
         when(articleResponseMapper.articleModelToArticleResponse(articleModel)).thenReturn(articleResponse);
 
-        Paginated<ArticleResponse> result = articleHandler.getArticles(page, size, sort, ascending);
+        Paginated<ArticleResponse> result = articleHandler.getArticlesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -131,19 +131,19 @@ class ArticleHandlerTest {
         assertEquals(size, result.getPageSize());
         assertEquals(1, result.getTotalPages());
 
-        verify(articleModelPersistencePort, times(1)).getArticles(page, size, sort, ascending);
+        verify(articleModelPersistencePort, times(1)).getArticlesPaginated(page, size, sort, ascending);
         verify(articleResponseMapper, times(1)).articleModelToArticleResponse(articleModel);
     }
 
     @Test
     @DisplayName("Debe obtener el artículo por ID correctamente")
     void getArticleById() {
-        when(articleModelServicePort.getArticleById(1L)).thenReturn(true);
+        when(articleModelServicePort.existsArticleById(1L)).thenReturn(true);
 
         boolean result = articleHandler.getArticleById(1L);
 
         assertTrue(result);
-        verify(articleModelServicePort, times(1)).getArticleById(1L);
+        verify(articleModelServicePort, times(1)).existsArticleById(1L);
     }
 
     @Test
@@ -199,4 +199,73 @@ class ArticleHandlerTest {
         assertEquals(100.0, result);
         verify(articleModelServicePort, times(1)).getArticlePriceById(1L);
     }
+
+
+
+    @Test
+    @DisplayName("Debe devolver todos los artículos por IDs correctamente")
+    void getAllArticlesByIds() {
+        List<Long> articleIds = List.of(1L, 2L);
+        List<ArticleModel> articleModels = List.of(articleModel);
+        ArticleResponse articleResponse = new ArticleResponse();
+        articleResponse.setId(1L);
+        articleResponse.setName("Galaxy S23");
+        articleResponse.setDescription("Latest Samsung smartphone");
+
+        when(articleModelServicePort.getAllArticlesByIds(articleIds)).thenReturn(articleModels);
+        when(articleResponseMapper.articleModelToArticleResponse(articleModel)).thenReturn(articleResponse);
+
+        List<ArticleResponse> result = articleHandler.getAllArticlesByIds(articleIds);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(articleResponse, result.get(0));
+
+        verify(articleModelServicePort, times(1)).getAllArticlesByIds(articleIds);
+        verify(articleResponseMapper, times(1)).articleModelToArticleResponse(articleModel);
+    }
+
+    @Test
+    void getAllArticlesPaginatedByIds() {
+        int page = 0;
+        int size = 10;
+        String sort = "name";
+        boolean ascending = true;
+        String categoryName = "Smartphones";
+        String brandName = "Samsung";
+        List<Long> articleIds = Arrays.asList(1L, 2L);
+
+        Paginated<ArticleModel> paginatedArticleModel = new Paginated<>(List.of(articleModel), page, size, 1);
+
+        when(articleModelPersistencePort.getArticlesPaginatedByFilters(page, size, sort, ascending, categoryName, brandName, articleIds))
+                .thenReturn(paginatedArticleModel);
+        when(articleResponseMapper.articleModelToArticleResponse(articleModel)).thenReturn(articleResponse);
+
+        CategoryResponseForArticle categoryResponse1 = new CategoryResponseForArticle();
+        categoryResponse1.setId(1L);
+        categoryResponse1.setName("Smartphones");
+
+        CategoryResponseForArticle categoryResponse2 = new CategoryResponseForArticle();
+        categoryResponse2.setId(2L);
+        categoryResponse2.setName("Electronics");
+
+        articleResponse.setCategories(Arrays.asList(categoryResponse2, categoryResponse1));
+
+        Paginated<ArticleResponse> result = articleHandler.getAllArticlesPaginatedByIds(page, size, sort, ascending, categoryName, brandName, articleIds);
+
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals(articleResponse, result.getContent().get(0));
+        assertEquals(page, result.getPageNumber());
+        assertEquals(size, result.getPageSize());
+        assertEquals(1, result.getTotalPages());
+
+        assertEquals("Electronics", result.getContent().get(0).getCategories().get(0).getName());
+        assertEquals("Smartphones", result.getContent().get(0).getCategories().get(1).getName());
+
+        verify(articleModelPersistencePort, times(1)).getArticlesPaginatedByFilters(page, size, sort, ascending, categoryName, brandName, articleIds);
+        verify(articleResponseMapper, times(1)).articleModelToArticleResponse(articleModel);
+    }
+
+
 }

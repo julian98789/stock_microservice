@@ -3,6 +3,7 @@ package com.stock_service.stock.infrastructure.http.controller;
 import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
+import com.stock_service.stock.application.dto.article_dto.ArticleCartRequest;
 import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
@@ -22,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/article")
@@ -81,7 +84,7 @@ public class ArticleRestController {
             @RequestParam(defaultValue = "true") boolean ascending) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para obtener articulos con los siguientes parámetros: página = {}, tamaño = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<ArticleResponse> paginatedResult = articleHandler.getArticles(page, size, sort, ascending);
+        Paginated<ArticleResponse> paginatedResult = articleHandler.getArticlesPaginated(page, size, sort, ascending);
 
         logger.info("[Infraestructura] Se obtuvieron {} articulos en la página {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
@@ -200,6 +203,59 @@ public class ArticleRestController {
         Double price = articleHandler.getArtclePriceById(articleId);
         return ResponseEntity.ok(price);
     }
+
+    @Operation(
+            summary = "Obtener todos los artículos paginados por IDs",
+            description = "Este endpoint permite obtener una lista paginada de artículos por sus IDs, con opciones de ordenación y paginación.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Paginated.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @GetMapping("/article-cart")
+    public ResponseEntity<Paginated<ArticleResponse>> getAllArticlesPaginatedByIds(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
+            @RequestParam(defaultValue = "true") boolean ascending,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String brandName,
+            @RequestBody @Valid ArticleCartRequest articleCartRequest) {
+
+        Paginated<ArticleResponse> paginatedResult = articleHandler.getAllArticlesPaginatedByIds(
+                page, size, sort, ascending, categoryName, brandName, articleCartRequest.getArticleIds());
+
+        return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Obtener todos los artículos por IDs",
+            description = "Este endpoint permite obtener una lista de todos los artículos por sus IDs.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ArticleResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @PreAuthorize(Util.ROLE_CLIENTE)
+    @GetMapping("/get-all-articles")
+    public ResponseEntity<List<ArticleResponse>> getAllArticles(@RequestBody ArticleCartRequest articleCartRequest) {
+        List<ArticleResponse> articleResponses = articleHandler.getAllArticlesByIds(articleCartRequest.getArticleIds());
+        return ResponseEntity.ok(articleResponses);
+    }
+
 
 
 }

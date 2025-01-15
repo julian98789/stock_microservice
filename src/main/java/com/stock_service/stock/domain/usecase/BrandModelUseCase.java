@@ -36,10 +36,10 @@ public class BrandModelUseCase implements IBrandModelServicePort{
 
 
     @Override
-    public Paginated<BrandModel> getBrands(int page, int size, String sort, boolean ascending) {
+    public Paginated<BrandModel> getBrandsPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Dominio] Recibiendo solicitud para obtener marca con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<BrandModel> brands = brandModelPersistencePort.getBrands(page, size, sort, ascending);
+        Paginated<BrandModel> brands = brandModelPersistencePort.getBrandsPaginated(page, size, sort, ascending);
 
         logger.info("[Dominio] Se obtuvieron {} marcas en la pagina {}", brands.getContent().size(), page);
         return brands;

@@ -84,7 +84,7 @@ class BrandRestControllerTest {
         BrandResponse brandResponse = new BrandResponse();
         Paginated<BrandResponse> paginatedResponse = new Paginated<>(List.of(brandResponse), page, size, 1);
 
-        when(brandHandler.getBrands(page, size, sort, ascending)).thenReturn(paginatedResponse);
+        when(brandHandler.getBrandsPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
 
         mockMvc.perform(get("/api/brand/listar")
                         .param("page", String.valueOf(page))
@@ -95,6 +95,6 @@ class BrandRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(brandHandler, times(1)).getBrands(page, size, sort, ascending);
+        verify(brandHandler, times(1)).getBrandsPaginated(page, size, sort, ascending);
     }
 }

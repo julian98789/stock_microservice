@@ -70,7 +70,7 @@ class BrandHandlerTest {
 
     @Test
     @DisplayName("Debe devolver marcas paginadas correctamente")
-    void getBrands() {
+    void getBrandsPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -81,10 +81,10 @@ class BrandHandlerTest {
         brandResponse.setDescription("Samsung Electronics");
         paginatedBrandModel = new Paginated<>(List.of(brandModel), page, size, 1);
 
-        when(brandModelServicePort.getBrands(page, size, sort, ascending)).thenReturn(paginatedBrandModel);
+        when(brandModelServicePort.getBrandsPaginated(page, size, sort, ascending)).thenReturn(paginatedBrandModel);
         when(brandResponseMapper.brandModelToBrandResponse(brandModel)).thenReturn(brandResponse);
 
-        Paginated<BrandResponse> result = brandHandler.getBrands(page, size, sort, ascending);
+        Paginated<BrandResponse> result = brandHandler.getBrandsPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -93,7 +93,7 @@ class BrandHandlerTest {
         assertEquals(size, result.getPageSize());
         assertEquals(1, result.getTotalPages());
 
-        verify(brandModelServicePort, times(1)).getBrands(page, size, sort, ascending);
+        verify(brandModelServicePort, times(1)).getBrandsPaginated(page, size, sort, ascending);
         verify(brandResponseMapper, times(1)).brandModelToBrandResponse(brandModel);
     }
 }

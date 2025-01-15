@@ -79,7 +79,7 @@ public class BrandRestController {
             @RequestParam(defaultValue = "true") boolean ascending) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para obtener marcas con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
-        Paginated<BrandResponse> paginatedResult = brandHandler.getBrands(page, size, sort, ascending);
+        Paginated<BrandResponse> paginatedResult = brandHandler.getBrandsPaginated(page, size, sort, ascending);
 
         logger.info("[Infraestructura] Se obtuvieron {} marcas en la pagina {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);

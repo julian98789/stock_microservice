@@ -8,12 +8,14 @@ import com.stock_service.stock.domain.util.Util;
 import com.stock_service.stock.infrastructure.persistence.jpa.entity.ArticleEntity;
 import com.stock_service.stock.infrastructure.persistence.jpa.mapper.IArticleEntityMapper;
 import com.stock_service.stock.infrastructure.persistence.jpa.repository.IArticleRepository;
+import com.stock_service.stock.infrastructure.persistence.jpa.specifications.ArticleSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
     }
 
     @Override
-    public Paginated<ArticleModel> getArticles(int page, int size, String sort, boolean ascending) {
+    public Paginated<ArticleModel> getArticlesPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Infraestructura] Recibiendo solicitud para obtener articulos con los siguientes parametros: pagina = {}, tamano = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         Sort.Direction direction = ascending ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -85,4 +87,36 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
         entity.setQuantity(newQuantity);
         articleRepository.save(entity);
     }
+
+    @Override
+    public Paginated<ArticleModel> getArticlesPaginatedByFilters(int page, int size, String sort, boolean ascending, String categoryName, String brandName, List<Long> articleIds) {
+        Sort.Direction direction = ascending ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sort));
+
+        Specification<ArticleEntity> specification = Specification.where(ArticleSpecifications.inArticleIds(articleIds))
+                .and(ArticleSpecifications.byCategoryName(categoryName))
+                .and(ArticleSpecifications.byBrandName(brandName));
+
+        Page<ArticleEntity> articleEntities = articleRepository.findAll(specification, pageRequest);
+
+        List<ArticleModel> articles = articleEntities.stream()
+                .map(articleEntityMapper::articleEntityToArticleModel).toList();
+
+        logger.info("[Infraestructura] Mapeo de artículos completado, total obtenidos: {}", articles.size());
+        return new Paginated<>(
+                articles,
+                articleEntities.getNumber(),
+                articleEntities.getSize(),
+                articleEntities.getTotalElements()
+        );
+    }
+
+    @Override
+    public List<ArticleModel> getAllArticlesByIds(List<Long> articleIds) {
+        List<ArticleEntity> articleEntities = articleRepository.findAllById(articleIds);
+        return articleEntityMapper.toArticleModelList(articleEntities);
+    }
+
+
+
 }

@@ -39,10 +39,10 @@ public class BrandHandler implements IBrandHandler{
     }
 
     @Override
-    public Paginated<BrandResponse> getBrands(int page, int size, String sort, boolean ascending) {
+    public Paginated<BrandResponse> getBrandsPaginated(int page, int size, String sort, boolean ascending) {
 
         logger.info("[Aplicacion] Recibiendo solicitud para obtener marcas desde Controller con parametros - Pagina: {}, Tamaño: {}, Orden: {}, Ascendente: {}", page, size, sort, ascending);
-        Paginated<BrandModel> brands = brandModelServicePort.getBrands(page, size, sort, ascending);
+        Paginated<BrandModel> brands = brandModelServicePort.getBrandsPaginated(page, size, sort, ascending);
 
         List<BrandResponse> brandResponse = brands.getContent().stream()
                 .map(brandResponseMapper::brandModelToBrandResponse)

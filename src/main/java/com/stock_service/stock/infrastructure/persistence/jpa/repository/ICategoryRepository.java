@@ -11,4 +11,6 @@ public interface ICategoryRepository extends JpaRepository<CategoryEntity, Long>
 
     Optional<CategoryEntity> findByName(String aString);
     Page<CategoryEntity> findAll(Pageable pageable);
+
+
 }
