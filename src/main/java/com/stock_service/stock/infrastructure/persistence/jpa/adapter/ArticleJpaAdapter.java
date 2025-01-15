@@ -117,4 +117,6 @@ public class ArticleJpaAdapter implements IArticleModelPersistencePort {
         return articleEntityMapper.toArticleModelList(articleEntities);
     }
 
+
+
 }

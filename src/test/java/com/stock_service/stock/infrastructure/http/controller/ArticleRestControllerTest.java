@@ -1,6 +1,7 @@
 package com.stock_service.stock.infrastructure.http.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stock_service.stock.application.dto.article_dto.ArticleCartRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
@@ -196,5 +197,54 @@ class ArticleRestControllerTest {
                 .andExpect(content().json("100.0"));
 
         verify(articleHandler, times(1)).getArtclePriceById(1L);
+    }
+
+    @Test
+    @WithMockUser(roles = {"ADMIN", "CLIENTE", "AUX_BODEGA"})
+    @DisplayName("Debe devolver artículos paginados por IDs correctamente")
+    void getAllArticlesPaginatedByIds() throws Exception {
+        int page = 0;
+        int size = 10;
+        String sort = "name";
+        boolean ascending = true;
+        ArticleCartRequest articleCartRequest = new ArticleCartRequest();
+        articleCartRequest.setArticleIds(List.of(1L, 2L));
+
+        Paginated<ArticleResponse> paginatedResponse = new Paginated<>(List.of(new ArticleResponse()), page, size, 1);
+
+        when(articleHandler.getAllArticlesPaginatedByIds(page, size, sort, ascending, null, null, articleCartRequest.getArticleIds()))
+                .thenReturn(paginatedResponse);
+
+        mockMvc.perform(get("/api/article/article-cart")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size))
+                        .param("sort", sort)
+                        .param("ascending", String.valueOf(ascending))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(articleCartRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(articleHandler, times(1)).getAllArticlesPaginatedByIds(page, size, sort, ascending, null, null, articleCartRequest.getArticleIds());
+    }
+
+    @Test
+    @WithMockUser(roles = "CLIENTE")
+    @DisplayName("Debe devolver todos los artículos por IDs correctamente")
+    void getAllArticles() throws Exception {
+        ArticleCartRequest articleCartRequest = new ArticleCartRequest();
+        articleCartRequest.setArticleIds(List.of(1L, 2L));
+
+        List<ArticleResponse> articleResponses = List.of(new ArticleResponse());
+
+        when(articleHandler.getAllArticlesByIds(articleCartRequest.getArticleIds())).thenReturn(articleResponses);
+
+        mockMvc.perform(get("/api/article/get-all-articles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(articleCartRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(articleHandler, times(1)).getAllArticlesByIds(articleCartRequest.getArticleIds());
     }
 }

@@ -1,6 +1,9 @@
 package com.stock_service.stock.domain.usecase;
 
+import com.stock_service.stock.domain.api.IArticleModelServicePort;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
+import com.stock_service.stock.domain.model.ArticleModel;
+import com.stock_service.stock.domain.model.BrandModel;
 import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.ICategoryModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
@@ -29,10 +32,18 @@ class CategoryModelUseCaseTest {
     @Mock
     private CategoryModel categoryModel;
 
+    @Mock
+    private IArticleModelServicePort articleModelServicePort;
+
+    @Mock
+    private ArticleModel articleModel;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         categoryModel = new CategoryModel(6L, "Electronics", "Electronic devices");
+        BrandModel brand = new BrandModel(1L, "BrandName", "BrandDescription");
+         articleModel = new ArticleModel(1L, "ArticleName", "ArticleDescription", 10, 100.0, brand, List.of(categoryModel));
     }
 
     @Test
@@ -82,4 +93,26 @@ class CategoryModelUseCaseTest {
         verify(categoryModelPersistencePort, times(1)).getCategoriesPaginated(page, size, sort, ascending);
 
     }
+
+    @Test
+    @DisplayName("Debe devolver los nombres de las categorías por ID de artículo correctamente")
+    void getCategoryNamesByArticleId() {
+        Long articleId = 1L;
+        articleModel.setCategories(List.of(
+                new CategoryModel(1L, "Electronics", "Electronic devices"),
+                new CategoryModel(2L, "Books", "Books and novels")
+        ));
+
+        when(articleModelServicePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        List<String> result = categoryModelUseCase.getCategoryNamesByArticleId(articleId);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(List.of("Electronics", "Books"), result);
+
+        verify(articleModelServicePort, times(1)).getArticleById(articleId);
+    }
+
+
 }

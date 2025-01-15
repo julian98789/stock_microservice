@@ -204,6 +204,20 @@ public class ArticleRestController {
         return ResponseEntity.ok(price);
     }
 
+    @Operation(
+            summary = "Obtener todos los artículos paginados por IDs",
+            description = "Este endpoint permite obtener una lista paginada de artículos por sus IDs, con opciones de ordenación y paginación.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Paginated.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/article-cart")
     public ResponseEntity<Paginated<ArticleResponse>> getAllArticlesPaginatedByIds(
@@ -221,6 +235,20 @@ public class ArticleRestController {
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Obtener todos los artículos por IDs",
+            description = "Este endpoint permite obtener una lista de todos los artículos por sus IDs.",
+            tags = {"Article"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ArticleResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_CLIENTE)
     @GetMapping("/get-all-articles")
     public ResponseEntity<List<ArticleResponse>> getAllArticles(@RequestBody ArticleCartRequest articleCartRequest) {

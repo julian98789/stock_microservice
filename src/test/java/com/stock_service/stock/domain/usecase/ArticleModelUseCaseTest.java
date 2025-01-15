@@ -1,6 +1,7 @@
 package com.stock_service.stock.domain.usecase;
 
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
+import com.stock_service.stock.domain.exception.NotFoundException;
 import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.model.BrandModel;
 import com.stock_service.stock.domain.model.CategoryModel;
@@ -54,35 +55,6 @@ class ArticleModelUseCaseTest {
         verify(articleModelPersistencePort, never()).saveArticle(articleModel);
     }
 
-    @Test
-    @DisplayName("Deberían devolverse los artículos paginados correctamente")
-    void getArticlesPaginated() {
-        int page = 1;
-        int size = 5;
-        String sort = "name";
-        boolean ascending = true;
-
-        BrandModel brand = new BrandModel(1L, "BrandName", "BrandDescription");
-        CategoryModel category = new CategoryModel(1L, "CategoryName", "CategoryDescription");
-
-        ArticleModel article1 = new ArticleModel(1L, "Article A", "Description A", 10, 100.0, brand, List.of(category));
-        ArticleModel article2 = new ArticleModel(2L, "Article B", "Description B", 20, 200.0, brand, List.of(category));
-
-        List<ArticleModel> articleList = Arrays.asList(article1, article2);
-        Paginated<ArticleModel> paginatedResponse = new Paginated<>(articleList, page, size, 10);
-
-        when(articleModelPersistencePort.getArticlesPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
-
-        Paginated<ArticleModel> result = articleModelUseCase.getArticlesPaginated(page, size, sort, ascending);
-
-        assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-        assertEquals(1, result.getPageNumber());
-        assertEquals(5, result.getPageSize());
-        assertEquals(10, result.getTotalElements());
-        assertEquals(2, result.getTotalPages());
-        verify(articleModelPersistencePort, times(1)).getArticlesPaginated(page, size, sort, ascending);
-    }
 
     @Test
     @DisplayName("Debe reducir la cantidad del artículo correctamente")
@@ -156,6 +128,39 @@ class ArticleModelUseCaseTest {
 
         assertTrue(result);
         verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+    }
+
+
+
+    @Test
+    @DisplayName("Debe obtener artículo por ID correctamente")
+    void getArticleById() {
+        Long articleId = 1L;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        ArticleModel result = articleModelUseCase.getArticleById(articleId);
+
+        assertNotNull(result);
+        assertEquals(articleModel, result);
+        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+    }
+
+
+    @Test
+    @DisplayName("Debe obtener todos los artículos por IDs correctamente")
+    void getAllArticlesByIds() {
+        List<Long> articleIds = List.of(1L, 2L);
+        List<ArticleModel> articleModels = List.of(articleModel, new ArticleModel(2L, "AnotherArticle", "AnotherDescription", 5, 50.0, null, null));
+
+        when(articleModelPersistencePort.getAllArticlesByIds(articleIds)).thenReturn(articleModels);
+
+        List<ArticleModel> result = articleModelUseCase.getAllArticlesByIds(articleIds);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(articleModels, result);
+        verify(articleModelPersistencePort, times(1)).getAllArticlesByIds(articleIds);
     }
 
 

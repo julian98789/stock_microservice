@@ -88,6 +88,19 @@ public class CategoryRestController {
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Obtener nombres de categorías por ID de artículo",
+            description = "Este endpoint permite obtener una lista de nombres de categorías asociadas a un artículo específico por su ID.",
+            tags = {"Category"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Nombres de categorías obtenidos exitosamente",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
     @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/names-by-article/{articleId}")
     public ResponseEntity<List<String>> getCategoryNamesByArticleId(@PathVariable Long articleId) {

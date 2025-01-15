@@ -134,4 +134,27 @@ class CategoryJpaAdapterTest {
         verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(0));
         verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(1));
     }
+
+
+    @Test
+    @DisplayName("Debe recuperar categorías por IDs correctamente")
+    void getCategoriesByIds() {
+        List<Long> ids = List.of(1L, 2L);
+        List<CategoryEntity> categoryEntities = List.of(categoryEntity, new CategoryEntity());
+        List<CategoryModel> categoryModels = List.of(categoryModel, new CategoryModel(2L, "Books", "Books and novels"));
+
+        when(categoryRepository.findAllById(ids)).thenReturn(categoryEntities);
+        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(0))).thenReturn(categoryModels.get(0));
+        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(1))).thenReturn(categoryModels.get(1));
+
+        List<CategoryModel> result = categoryJpaAdapter.getCategoriesByIds(ids);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(categoryModels, result);
+
+        verify(categoryRepository, times(1)).findAllById(ids);
+        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(0));
+        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(1));
+    }
 }
