@@ -87,7 +87,7 @@ class CategoryJpaAdapterTest {
 
     @Test
     @DisplayName("Debe devolver categorías paginadas correctamente")
-    void getCategories() {
+    void getCategoriesPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -100,7 +100,7 @@ class CategoryJpaAdapterTest {
         when(categoryRepository.findAll(pageRequest)).thenReturn(categoryEntities);
         when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntity)).thenReturn(categoryModel);
 
-        Paginated<CategoryModel> result = categoryJpaAdapter.getCategories(page, size, sort, ascending);
+        Paginated<CategoryModel> result = categoryJpaAdapter.getCategoriesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -112,6 +112,29 @@ class CategoryJpaAdapterTest {
         verify(categoryRepository, times(1)).findAll(pageRequest);
         verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntity);
     }
+
+    @Test
+    @DisplayName("Debe recuperar categorías por IDs correctamente")
+    void getCategoriesPaginatedByIds() {
+        List<Long> ids = List.of(1L, 2L);
+        List<CategoryEntity> categoryEntities = List.of(categoryEntity, new CategoryEntity());
+        List<CategoryModel> categoryModels = List.of(categoryModel, new CategoryModel(2L, "Books", "Books and novels"));
+
+        when(categoryRepository.findAllById(ids)).thenReturn(categoryEntities);
+        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(0))).thenReturn(categoryModels.get(0));
+        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(1))).thenReturn(categoryModels.get(1));
+
+        List<CategoryModel> result = categoryJpaAdapter.getCategoriesByIds(ids);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(categoryModels, result);
+
+        verify(categoryRepository, times(1)).findAllById(ids);
+        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(0));
+        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(1));
+    }
+
 
     @Test
     @DisplayName("Debe recuperar categorías por IDs correctamente")

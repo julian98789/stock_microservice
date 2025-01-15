@@ -91,7 +91,7 @@ class BrandJpaAdapterTest {
 
     @Test
     @DisplayName("Debe devolver marcas paginadas correctamente")
-    void getBrands() {
+    void getBrandsPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -104,7 +104,7 @@ class BrandJpaAdapterTest {
         when(brandRepository.findAll(pageRequest)).thenReturn(brandEntities);
         when(brandEntityMapper.brandEntityToBrandModel(brandEntity)).thenReturn(brandModel);
 
-        Paginated<BrandModel> result = brandJpaAdapter.getBrands(page, size, sort, ascending);
+        Paginated<BrandModel> result = brandJpaAdapter.getBrandsPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());

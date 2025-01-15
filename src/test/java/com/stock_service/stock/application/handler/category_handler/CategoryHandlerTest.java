@@ -44,7 +44,6 @@ class CategoryHandlerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Inicializa los objetos necesarios
         categoryRequest = new CategoryRequest();
         categoryModel = new CategoryModel(1L, "Electronics", "Electronic devices");
         categoryResponse = new CategoryResponse();
@@ -60,11 +59,9 @@ class CategoryHandlerTest {
 
         CategoryResponse result = categoryHandler.saveCategory(categoryRequest);
 
-        // Verificar resultados
         assertNotNull(result);
         assertEquals(categoryResponse, result);
 
-        // Verificar interacciones con los mocks
         verify(categoryRequestMapper).categoryRequestToCategoryModel(categoryRequest);
         verify(categoryModelServicePort).saveCategory(categoryModel);
         verify(categoryResponseMapper).categoryModelToCategoryResponse(categoryModel);
@@ -83,7 +80,7 @@ class CategoryHandlerTest {
         categoryResponse.setDescription("Various books");
         paginatedCategoryModel = new Paginated<>(List.of(categoryModel), page, size, 1);
 
-        when(categoryModelServicePort.getCategories(page, size, sort, ascending)).thenReturn(paginatedCategoryModel);
+        when(categoryModelServicePort.getCategoriesPaginated(page, size, sort, ascending)).thenReturn(paginatedCategoryModel);
         when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
 
         Paginated<CategoryResponse> result = categoryHandler.getCategories(page, size, sort, ascending);
@@ -95,7 +92,24 @@ class CategoryHandlerTest {
         assertEquals(size, result.getPageSize());
         assertEquals(1, result.getTotalPages());
 
-        verify(categoryModelServicePort, times(1)).getCategories(page, size, sort, ascending);
+        verify(categoryModelServicePort, times(1)).getCategoriesPaginated(page, size, sort, ascending);
         verify(categoryResponseMapper, times(1)).categoryModelToCategoryResponse(categoryModel);
+    }
+
+    @Test
+    @DisplayName("Debe devolver los nombres de las categorías por ID de artículo correctamente")
+    void getCategoryNamesByArticleId() {
+        Long articleId = 1L;
+        List<String> expectedCategoryNames = List.of("Electronics", "Smartphones");
+
+        when(categoryModelServicePort.getCategoryNamesByArticleId(articleId)).thenReturn(expectedCategoryNames);
+
+        List<String> result = categoryHandler.getCategoryNamesByArticleId(articleId);
+
+        assertNotNull(result);
+        assertEquals(expectedCategoryNames.size(), result.size());
+        assertEquals(expectedCategoryNames, result);
+
+        verify(categoryModelServicePort, times(1)).getCategoryNamesByArticleId(articleId);
     }
 }

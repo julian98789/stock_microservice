@@ -55,7 +55,7 @@ class BrandModelUseCaseTest {
 
     @Test
     @DisplayName("Deberían devolverse las marcas paginadas correctamente")
-    void getBrands() {
+    void getBrandsPaginated() {
         int page = 1;
         int size = 5;
         String sort = "name";
@@ -69,10 +69,10 @@ class BrandModelUseCaseTest {
         List<BrandModel> brandList = Arrays.asList(brand1, brand2);
         Paginated<BrandModel> paginatedResponse = new Paginated<>(brandList, page, size, 10);
 
-        when(brandModelPersistencePort.getBrands(page, size, sort, ascending)).thenReturn(paginatedResponse);
+        when(brandModelPersistencePort.getBrandsPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
 
         // Act
-        Paginated<BrandModel> result = brandModelUseCase.getBrands(page, size, sort, ascending);
+        Paginated<BrandModel> result = brandModelUseCase.getBrandsPaginated(page, size, sort, ascending);
 
         // Assert
         assertNotNull(result);
@@ -81,6 +81,6 @@ class BrandModelUseCaseTest {
         assertEquals(5, result.getPageSize());
         assertEquals(10, result.getTotalElements());
         assertEquals(2, result.getTotalPages());
-        verify(brandModelPersistencePort, times(1)).getBrands(page, size, sort, ascending);
+        verify(brandModelPersistencePort, times(1)).getBrandsPaginated(page, size, sort, ascending);
     }
 }

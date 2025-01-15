@@ -93,7 +93,7 @@ class ArticleJpaAdapterTest {
 
     @Test
     @DisplayName("Debe devolver artículos paginados correctamente")
-    void getArticles() {
+    void getArticlesPaginated() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -106,7 +106,7 @@ class ArticleJpaAdapterTest {
         when(articleRepository.findAll(pageRequest)).thenReturn(articleEntities);
         when(articleEntityMapper.articleEntityToArticleModel(articleEntity)).thenReturn(articleModel);
 
-        Paginated<ArticleModel> result = articleJpaAdapter.getArticles(page, size, sort, ascending);
+        Paginated<ArticleModel> result = articleJpaAdapter.getArticlesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -118,5 +118,58 @@ class ArticleJpaAdapterTest {
         verify(articleRepository, times(1)).findAll(pageRequest);
         verify(articleEntityMapper, times(1)).articleEntityToArticleModel(articleEntity);
     }
+
+    @Test
+    @DisplayName("Debe obtener artículo por ID correctamente")
+    void getArticleById() {
+        Long articleId = 1L;
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(articleEntity));
+
+        ArticleModel result = articleJpaAdapter.getArticleById(articleId);
+
+        assertNotNull(result);
+        assertEquals(articleModel, result);
+
+        verify(articleRepository).findById(articleId);
+        verify(articleEntityMapper).articleEntityToArticleModel(articleEntity);
+    }
+
+    @Test
+    @DisplayName("Debe reducir la cantidad de artículos correctamente")
+    void reduceArticleQuantity() {
+        Long articleId = 1L;
+        int quantityToReduce = 5;
+        int initialQuantity = 10;
+        articleEntity.setQuantity(initialQuantity);
+
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(articleEntity));
+
+        articleJpaAdapter.reduceArticleQuantity(articleId, quantityToReduce);
+
+        assertEquals(initialQuantity - quantityToReduce, articleEntity.getQuantity());
+        verify(articleRepository).save(articleEntity);
+    }
+
+    @Test
+    @DisplayName("Debe devolver todos los artículos por IDs correctamente")
+    void getAllArticlesByIds() {
+        List<Long> articleIds = List.of(1L, 2L);
+        List<ArticleEntity> articleEntities = List.of(articleEntity, articleEntity);
+
+        when(articleRepository.findAllById(articleIds)).thenReturn(articleEntities);
+        when(articleEntityMapper.toArticleModelList(articleEntities)).thenReturn(List.of(articleModel, articleModel));
+
+        List<ArticleModel> result = articleJpaAdapter.getAllArticlesByIds(articleIds);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(articleModel, result.get(0));
+        assertEquals(articleModel, result.get(1));
+
+        verify(articleRepository).findAllById(articleIds);
+        verify(articleEntityMapper).toArticleModelList(articleEntities);
+    }
+
+
 
 }

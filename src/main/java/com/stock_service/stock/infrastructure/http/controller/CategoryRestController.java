@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
@@ -85,4 +87,26 @@ public class CategoryRestController {
         logger.info("[Infraestructura] Se obtuvieron {} categorias en la pagina {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Obtener nombres de categorías por ID de artículo",
+            description = "Este endpoint permite obtener una lista de nombres de categorías asociadas a un artículo específico por su ID.",
+            tags = {"Category"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Nombres de categorías obtenidos exitosamente",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @GetMapping("/names-by-article/{articleId}")
+    public ResponseEntity<List<String>> getCategoryNamesByArticleId(@PathVariable Long articleId) {
+        List<String> categoryNames = categoryHandler.getCategoryNamesByArticleId(articleId);
+        return new ResponseEntity<>(categoryNames, HttpStatus.OK);
+    }
+
+
 }
