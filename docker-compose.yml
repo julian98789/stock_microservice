@@ -16,11 +16,11 @@ services:
     networks:
       - backend
 
-  java-app:
+  stock-app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: java-app-container
+    container_name: java-app-stock-container
     depends_on:
       - mySQL
     ports:

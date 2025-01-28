@@ -5,6 +5,7 @@ import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
 import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
 import com.stock_service.stock.application.dto.article_dto.ArticleCartRequest;
 import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
+import com.stock_service.stock.application.handler.article_handler.IArticleHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleRestController {
 
-    private final ArticleHandler articleHandler;
+    private final IArticleHandler articleHandler;
     private static final Logger logger = LoggerFactory.getLogger(ArticleRestController.class);
 
     @Operation(
