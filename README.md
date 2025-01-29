@@ -2,7 +2,7 @@
 
 The **Stock** microservice is responsible for inventory management in the database. Its main function is to register and manage items, categories, and brands, providing an efficient and scalable API for stock management.  
 
-This service follows a hexagonal architecture, ensuring a clear separation between business logic and infrastructure layers. Additionally, it integrates with other microservices, such as the transactions service, to ensure consistency in inventory management.  
+This service follows a hexagonal architecture, ensuring a clear separation between business logic and infrastructure layers. Additionally, it integrates with other microservices, such as the **transaction** service, to ensure consistency in inventory management.  
 
 ## Installation
 
