@@ -1,7 +1,7 @@
-package com.stock_service.stock.application.dto.article_dto;
+package com.stock_service.stock.application.dto.articledto;
 
-import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
+import com.stock_service.stock.application.dto.branddto.BrandResponse;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponseForArticle;
 import lombok.Getter;
 import lombok.Setter;
 

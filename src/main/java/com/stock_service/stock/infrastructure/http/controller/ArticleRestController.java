@@ -1,11 +1,10 @@
 package com.stock_service.stock.infrastructure.http.controller;
 
-import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
-import com.stock_service.stock.application.dto.article_dto.ArticleCartRequest;
-import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
-import com.stock_service.stock.application.handler.article_handler.IArticleHandler;
+import com.stock_service.stock.application.dto.articledto.ArticleQuantityRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleResponse;
+import com.stock_service.stock.application.dto.articledto.ArticleCartRequest;
+import com.stock_service.stock.application.handler.articlehandler.IArticleHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,8 +17,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,98 +30,87 @@ import java.util.List;
 public class ArticleRestController {
 
     private final IArticleHandler articleHandler;
-    private static final Logger logger = LoggerFactory.getLogger(ArticleRestController.class);
 
     @Operation(
-            summary = "Crear un nuevo artículo",
-            description = "Este endpoint permite crear un nuevo artículo en el sistema enviando los datos necesarios en el cuerpo de la solicitud.",
+            summary = "Create a new article",
+            description = "This endpoint allows creating a new article in the system by sending " +
+                    "the necessary data in the request body.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Artículo creado exitosamente",
+            @ApiResponse(responseCode = "201", description = "Article created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ArticleResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+            @ApiResponse(responseCode = "400", description = "Invalid request. Data validation error.",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+            @ApiResponse(responseCode = "500", description = "Internal server error.",
                     content = @Content(mediaType = "application/json"))
     })
-
-    @PreAuthorize(Util.ROLE_ADMIN )
+    @PreAuthorize(Util.ROLE_ADMIN)
     @PostMapping("/crear")
     public ResponseEntity<ArticleResponse> saveArticle(@Valid @RequestBody ArticleRequest articleRequest) {
-
-        logger.info("[Infraestructura] Recibiendo solicitud para crear artículo ");
         ArticleResponse savedArticle = articleHandler.saveArticle(articleRequest);
-
-        logger.info("[Infraestructura] Artículo creado exitosamente con nombre: {}", savedArticle.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
     }
 
     @Operation(
-            summary = "Obtener articulos paginados",
-            description = "Este endpoint permite obtener una lista paginada de articulos, con opciones de ordenación y paginación.",
+            summary = "Get paginated articles",
+            description = "This endpoint allows obtaining a paginated list of articles," +
+                    " with sorting and pagination options.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Articulos obtenidos exitosamente",
+            @ApiResponse(responseCode = "200", description = "Articles retrieved successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Paginated.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+            @ApiResponse(responseCode = "400", description = "Invalid request. Data validation error.",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+            @ApiResponse(responseCode = "500", description = "Internal server error.",
                     content = @Content(mediaType = "application/json"))
     })
-
-    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENT + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/listar")
     public ResponseEntity<Paginated<ArticleResponse>> getArticles(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) int size,
             @RequestParam(defaultValue = "name") @NotBlank @Size(min = 1) String sort,
             @RequestParam(defaultValue = "true") boolean ascending) {
-
-        logger.info("[Infraestructura] Recibiendo solicitud para obtener articulos con los siguientes parámetros: página = {}, tamaño = {}, orden = {}, ascendente = {}", page, size, sort, ascending);
         Paginated<ArticleResponse> paginatedResult = articleHandler.getArticlesPaginated(page, size, sort, ascending);
-
-        logger.info("[Infraestructura] Se obtuvieron {} articulos en la página {}", paginatedResult.getContent().size(), page);
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Obtener artículo por ID",
-            description = "Este endpoint permite obtener un artículo por su ID.",
+            summary = "Get article by ID",
+            description = "This endpoint allows obtaining an article by its ID.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artículo obtenido exitosamente",
+            @ApiResponse(responseCode = "200", description = "Article retrieved successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Boolean.class))),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+            @ApiResponse(responseCode = "404", description = "Article not found",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENT + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/{articleId}")
-    public ResponseEntity<Boolean> getArticleById( @PathVariable Long articleId) {
-        logger.info("[Infraestructura] Recibiendo solicitud para obtener artículo con ID: {}", articleId);
-         boolean articel = articleHandler.getArticleById(articleId);
-        logger.info("[Infraestructura] Artículo encontrado con ID: {}", articleId);
-        return ResponseEntity.ok(articel);
+    public ResponseEntity<Boolean> getArticleById(@PathVariable Long articleId) {
+        boolean article = articleHandler.getArticleById(articleId);
+        return ResponseEntity.ok(article);
     }
 
     @Operation(
-            summary = "Actualizar cantidad del artículo",
-            description = "Este endpoint permite actualizar la cantidad de un artículo.",
+            summary = "Update article quantity",
+            description = "This endpoint allows updating the quantity of an article.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cantidad del artículo actualizada exitosamente",
+            @ApiResponse(responseCode = "200", description = "Article quantity updated successfully",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+            @ApiResponse(responseCode = "404", description = "Article not found",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
     @PreAuthorize(Util.ROLE_AUX_BODEGA)
@@ -132,27 +118,24 @@ public class ArticleRestController {
     public void updateArticleQuantity(
             @PathVariable Long articleId,
             @RequestBody ArticleQuantityRequest articleQuantityRequest) {
-
-        logger.info("[Infraestructura] Recibiendo solicitud para actualizar la cantidad del articulo con ID: {}", articleId);
         articleHandler.updateArticleQuantity(articleId, articleQuantityRequest);
-        logger.info("[Infraestructura] Cantidad del articulo con ID: {} actualizada exitosamente.", articleId);
     }
 
     @Operation(
-            summary = "Verificar disponibilidad de stock",
-            description = "Este endpoint permite verificar si hay suficiente stock de un artículo.",
+            summary = "Check stock availability",
+            description = "This endpoint allows checking if there is sufficient stock of an article.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Stock verificado exitosamente",
+            @ApiResponse(responseCode = "200", description = "Stock checked successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Boolean.class))),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+            @ApiResponse(responseCode = "404", description = "Article not found",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize(Util.ROLE_CLIENTE)
+    @PreAuthorize(Util.ROLE_CLIENT)
     @GetMapping("/{articleId}/check-quantity/{quantity}")
     public ResponseEntity<Boolean> isStockSufficient(
             @PathVariable Long articleId,
@@ -162,64 +145,62 @@ public class ArticleRestController {
     }
 
     @Operation(
-            summary = "Reducir cantidad del artículo",
-            description = "Este endpoint permite reducir la cantidad de un artículo en el stock.",
+            summary = "Reduce article quantity",
+            description = "This endpoint allows reducing the quantity of an article in stock.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cantidad del artículo reducida exitosamente",
+            @ApiResponse(responseCode = "200", description = "Article quantity reduced successfully",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+            @ApiResponse(responseCode = "404", description = "Article not found",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize(Util.ROLE_CLIENTE)
+    @PreAuthorize(Util.ROLE_CLIENT)
     @PatchMapping("/{articleId}/subtract-stock")
     public void reduceArticleQuantity(@PathVariable Long articleId,
                                       @RequestBody @Valid ArticleQuantityRequest request) {
         articleHandler.reduceStock(articleId, request);
-        logger.info("[Infraestructura] Cantidad del articulo con ID: {} reducida exitosamente.", articleId);
     }
 
     @Operation(
-            summary = "Obtener precio del artículo por ID",
-            description = "Este endpoint permite obtener el precio de un artículo por su ID.",
+            summary = "Get article price by ID",
+            description = "This endpoint allows obtaining the price of an article by its ID.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Precio del artículo obtenido exitosamente",
+            @ApiResponse(responseCode = "200", description = "Article price retrieved successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Double.class))),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado",
+            @ApiResponse(responseCode = "404", description = "Article not found",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize(Util.ROLE_CLIENTE)
+    @PreAuthorize(Util.ROLE_CLIENT)
     @GetMapping("/{articleId}/price")
-    public ResponseEntity<Double> getArticlePriceById(
-            @PathVariable Long articleId ){
-
+    public ResponseEntity<Double> getArticlePriceById(@PathVariable Long articleId) {
         Double price = articleHandler.getArtclePriceById(articleId);
         return ResponseEntity.ok(price);
     }
 
     @Operation(
-            summary = "Obtener todos los artículos paginados por IDs",
-            description = "Este endpoint permite obtener una lista paginada de artículos por sus IDs, con opciones de ordenación y paginación.",
+            summary = "Get all paginated articles by IDs",
+            description = "This endpoint allows obtaining a paginated list of articles by their IDs, " +
+                    "with sorting and pagination options.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+            @ApiResponse(responseCode = "200", description = "Articles retrieved successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Paginated.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+            @ApiResponse(responseCode = "400", description = "Invalid request. Data validation error.",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+            @ApiResponse(responseCode = "500", description = "Internal server error.",
                     content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENTE + " or " + Util.ROLE_AUX_BODEGA)
+    @PreAuthorize(Util.ROLE_ADMIN + " or " + Util.ROLE_CLIENT + " or " + Util.ROLE_AUX_BODEGA)
     @GetMapping("/article-cart")
     public ResponseEntity<Paginated<ArticleResponse>> getAllArticlesPaginatedByIds(
             @RequestParam(defaultValue = "0") @Min(0) int page,
@@ -229,34 +210,29 @@ public class ArticleRestController {
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String brandName,
             @RequestBody @Valid ArticleCartRequest articleCartRequest) {
-
         Paginated<ArticleResponse> paginatedResult = articleHandler.getAllArticlesPaginatedByIds(
                 page, size, sort, ascending, categoryName, brandName, articleCartRequest.getArticleIds());
-
         return new ResponseEntity<>(paginatedResult, HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Obtener todos los artículos por IDs",
-            description = "Este endpoint permite obtener una lista de todos los artículos por sus IDs.",
+            summary = "Get all articles by IDs",
+            description = "This endpoint allows obtaining a list of all articles by their IDs.",
             tags = {"Article"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artículos obtenidos exitosamente",
+            @ApiResponse(responseCode = "200", description = "Articles retrieved successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ArticleResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida. Error en la validación de datos.",
+            @ApiResponse(responseCode = "400", description = "Invalid request. Data validation error.",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.",
+            @ApiResponse(responseCode = "500", description = "Internal server error.",
                     content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize(Util.ROLE_CLIENTE)
+    @PreAuthorize(Util.ROLE_CLIENT)
     @GetMapping("/get-all-articles")
     public ResponseEntity<List<ArticleResponse>> getAllArticles(@RequestBody ArticleCartRequest articleCartRequest) {
         List<ArticleResponse> articleResponses = articleHandler.getAllArticlesByIds(articleCartRequest.getArticleIds());
         return ResponseEntity.ok(articleResponses);
     }
-
-
-
 }

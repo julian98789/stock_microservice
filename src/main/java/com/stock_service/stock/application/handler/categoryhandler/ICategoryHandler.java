@@ -1,7 +1,7 @@
-package com.stock_service.stock.application.handler.category_handler;
+package com.stock_service.stock.application.handler.categoryhandler;
 
-import com.stock_service.stock.application.dto.category_dto.CategoryRequest;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponse;
+import com.stock_service.stock.application.dto.categorydto.CategoryRequest;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponse;
 import com.stock_service.stock.domain.util.Paginated;
 
 import java.util.List;

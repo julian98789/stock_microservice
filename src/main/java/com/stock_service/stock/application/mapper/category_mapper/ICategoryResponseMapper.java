@@ -1,7 +1,7 @@
 package com.stock_service.stock.application.mapper.category_mapper;
 
-import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponse;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponseForArticle;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponse;
 import com.stock_service.stock.domain.model.CategoryModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

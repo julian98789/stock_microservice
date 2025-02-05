@@ -1,9 +1,9 @@
-package com.stock_service.stock.application.handler.article_handler;
+package com.stock_service.stock.application.handler.articlehandler;
 
-import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
+import com.stock_service.stock.application.dto.articledto.ArticleQuantityRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleResponse;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponseForArticle;
 import com.stock_service.stock.application.mapper.article_mapper.IArticleRequestMapper;
 import com.stock_service.stock.application.mapper.article_mapper.IArticleResponseMapper;
 import com.stock_service.stock.domain.api.IArticleModelServicePort;
@@ -60,34 +60,35 @@ class ArticleHandlerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        brandModel = new BrandModel(1L, "Samsung", "Samsung Electronics");
-        categoryModels = Arrays.asList(
-                new CategoryModel(1L, "Smartphones", "Phones and Accessories"),
-                new CategoryModel(2L, "Electronics", "Electronic Devices")
-        );
-
         articleRequest = new ArticleRequest();
         articleRequest.setBrandId(1L);
         articleRequest.setCategoryIds(List.of(1L, 2L));
 
         articleResponse = new ArticleResponse();
-        articleModel = new ArticleModel(1L, "Galaxy S23", "Latest Samsung smartphone", 100, 999.99, brandModel, categoryModels);
+        articleModel = new ArticleModel();
+
+    }
+
+    @Test
+    @DisplayName("Should save article correctly")
+    void shouldSaveArticleCorrectly() {
+        brandModel = new BrandModel();
+        brandModel.setId(1L);
+        categoryModels = Arrays.asList(
+                new CategoryModel(1L, "Smartphones", "Phones and Accessories"),
+                new CategoryModel(2L, "Electronics", "Electronic Devices")
+        );
 
         when(articleRequestMapper.articleRequestToArticleModel(articleRequest)).thenReturn(articleModel);
         when(brandModelPersistencePort.getBrandById(1L)).thenReturn(brandModel);
         when(categoryModelPersistencePort.getCategoriesByIds(List.of(1L, 2L))).thenReturn(categoryModels);
         when(articleModelServicePort.saveArticle(articleModel)).thenReturn(articleModel);
         when(articleResponseMapper.articleModelToArticleResponse(articleModel)).thenReturn(articleResponse);
-    }
-
-    @Test
-    void saveArticle() {
 
         ArticleResponse result = articleHandler.saveArticle(articleRequest);
 
         assertNotNull(result);
         assertEquals(articleResponse, result);
-
 
         verify(articleRequestMapper).articleRequestToArticleModel(articleRequest);
         verify(brandModelPersistencePort).getBrandById(1L);
@@ -97,25 +98,17 @@ class ArticleHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe devolver artículos paginados correctamente")
-    void getArticlesPaginated() {
+    @DisplayName("Should return paginated articles correctly")
+    void shouldReturnPaginatedArticlesCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
         boolean ascending = true;
 
-        articleResponse.setId(1L);
-        articleResponse.setName("Galaxy S23");
-        articleResponse.setDescription("Latest Samsung smartphone");
         CategoryResponseForArticle categoryResponse1 = new CategoryResponseForArticle();
-        categoryResponse1.setId(1L);
         categoryResponse1.setName("Smartphones");
 
-        CategoryResponseForArticle categoryResponse2 = new CategoryResponseForArticle();
-        categoryResponse2.setId(2L);
-        categoryResponse2.setName("Electronics");
-
-        articleResponse.setCategories(Arrays.asList(categoryResponse1, categoryResponse2));
+        articleResponse.setCategories(List.of(categoryResponse1));
 
         Paginated<ArticleModel> paginatedArticleModel = new Paginated<>(List.of(articleModel), page, size, 1);
 
@@ -136,8 +129,8 @@ class ArticleHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe obtener el artículo por ID correctamente")
-    void getArticleById() {
+    @DisplayName("Should get article by ID correctly")
+    void shouldGetArticleByIdCorrectly() {
         when(articleModelServicePort.existsArticleById(1L)).thenReturn(true);
 
         boolean result = articleHandler.getArticleById(1L);
@@ -147,12 +140,15 @@ class ArticleHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe actualizar la cantidad del artículo correctamente")
-    void updateArticleQuantity() {
+    @DisplayName("Should update article quantity correctly")
+    void shouldUpdateArticleQuantityCorrectly() {
         ArticleQuantityRequest request = new ArticleQuantityRequest();
         request.setQuantity(5);
 
-        ArticleModel updatedArticle = new ArticleModel(1L, "Galaxy S23", "Latest Samsung smartphone", 105, 999.99, brandModel, categoryModels);
+        ArticleModel updatedArticle = new ArticleModel();
+        updatedArticle.setId(1L);
+        updatedArticle.setQuantity(7);
+
         when(articleModelServicePort.updateArticleQuantity(1L, 5)).thenReturn(updatedArticle);
         when(articleResponseMapper.articleModelToArticleResponse(updatedArticle)).thenReturn(articleResponse);
 
@@ -165,8 +161,8 @@ class ArticleHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe verificar si el stock es suficiente correctamente")
-    void checkAvailabilityArticle() {
+    @DisplayName("Should check article availability correctly")
+    void shouldCheckArticleAvailabilityCorrectly() {
         when(articleModelServicePort.isStockAvailable(1L, 10)).thenReturn(true);
 
         boolean result = articleHandler.checkAvailabilityArticle(1L, 10);
@@ -176,8 +172,8 @@ class ArticleHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe reducir la cantidad del artículo correctamente")
-    void reduceStock() {
+    @DisplayName("Should reduce article stock correctly")
+    void shouldReduceArticleStockCorrectly() {
         ArticleQuantityRequest request = new ArticleQuantityRequest();
         request.setQuantity(5);
 
@@ -189,8 +185,8 @@ class ArticleHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe obtener el precio del artículo por ID correctamente")
-    void getArticlePriceById() {
+    @DisplayName("Should get article price by ID correctly")
+    void shouldGetArticlePriceByIdCorrectly() {
         when(articleModelServicePort.getArticlePriceById(1L)).thenReturn(100.0);
 
         Double result = articleHandler.getArtclePriceById(1L);
@@ -200,17 +196,11 @@ class ArticleHandlerTest {
         verify(articleModelServicePort, times(1)).getArticlePriceById(1L);
     }
 
-
-
     @Test
-    @DisplayName("Debe devolver todos los artículos por IDs correctamente")
-    void getAllArticlesByIds() {
+    @DisplayName("Should return all articles by IDs correctly")
+    void shouldReturnAllArticlesByIdsCorrectly() {
         List<Long> articleIds = List.of(1L, 2L);
         List<ArticleModel> articleModels = List.of(articleModel);
-        ArticleResponse articleResponse = new ArticleResponse();
-        articleResponse.setId(1L);
-        articleResponse.setName("Galaxy S23");
-        articleResponse.setDescription("Latest Samsung smartphone");
 
         when(articleModelServicePort.getAllArticlesByIds(articleIds)).thenReturn(articleModels);
         when(articleResponseMapper.articleModelToArticleResponse(articleModel)).thenReturn(articleResponse);
@@ -226,7 +216,8 @@ class ArticleHandlerTest {
     }
 
     @Test
-    void getAllArticlesPaginatedByIds() {
+    @DisplayName("Should return paginated articles by IDs correctly")
+    void shouldReturnPaginatedArticlesByIdsCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -237,19 +228,15 @@ class ArticleHandlerTest {
 
         Paginated<ArticleModel> paginatedArticleModel = new Paginated<>(List.of(articleModel), page, size, 1);
 
-        when(articleModelPersistencePort.getArticlesPaginatedByFilters(page, size, sort, ascending, categoryName, brandName, articleIds))
-                .thenReturn(paginatedArticleModel);
+        when(articleModelPersistencePort.getArticlesPaginatedByFilters(page, size, sort, ascending, categoryName,
+                brandName, articleIds)).thenReturn(paginatedArticleModel);
+
         when(articleResponseMapper.articleModelToArticleResponse(articleModel)).thenReturn(articleResponse);
 
         CategoryResponseForArticle categoryResponse1 = new CategoryResponseForArticle();
-        categoryResponse1.setId(1L);
         categoryResponse1.setName("Smartphones");
 
-        CategoryResponseForArticle categoryResponse2 = new CategoryResponseForArticle();
-        categoryResponse2.setId(2L);
-        categoryResponse2.setName("Electronics");
-
-        articleResponse.setCategories(Arrays.asList(categoryResponse2, categoryResponse1));
+        articleResponse.setCategories(List.of(categoryResponse1));
 
         Paginated<ArticleResponse> result = articleHandler.getAllArticlesPaginatedByIds(page, size, sort, ascending, categoryName, brandName, articleIds);
 
@@ -259,13 +246,9 @@ class ArticleHandlerTest {
         assertEquals(page, result.getPageNumber());
         assertEquals(size, result.getPageSize());
         assertEquals(1, result.getTotalPages());
-
-        assertEquals("Electronics", result.getContent().get(0).getCategories().get(0).getName());
-        assertEquals("Smartphones", result.getContent().get(0).getCategories().get(1).getName());
+        assertEquals("Smartphones", result.getContent().get(0).getCategories().get(0).getName());
 
         verify(articleModelPersistencePort, times(1)).getArticlesPaginatedByFilters(page, size, sort, ascending, categoryName, brandName, articleIds);
         verify(articleResponseMapper, times(1)).articleModelToArticleResponse(articleModel);
     }
-
-
 }

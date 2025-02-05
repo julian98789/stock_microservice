@@ -40,7 +40,7 @@ class CategoryJpaAdapterTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        categoryModel = new CategoryModel(1L, "Electronics", "Electronic devices");
+        categoryModel = new CategoryModel();
         categoryEntity = new CategoryEntity();
 
         when(categoryEntityMapper.categoryModelToCategoryEntity(categoryModel)).thenReturn(categoryEntity);
@@ -49,7 +49,8 @@ class CategoryJpaAdapterTest {
 
 
     @Test
-    void saveCategory() {
+    @DisplayName("Should save category correctly")
+    void shouldSaveCategoryCorrectly() {
         when(categoryRepository.save(categoryEntity)).thenReturn(categoryEntity);
 
         CategoryModel result = categoryJpaAdapter.saveCategory(categoryModel);
@@ -58,13 +59,13 @@ class CategoryJpaAdapterTest {
         assertEquals(categoryModel, result);
 
         verify(categoryRepository).save(categoryEntity);
-
         verify(categoryEntityMapper).categoryModelToCategoryEntity(categoryModel);
         verify(categoryEntityMapper).categoryEntityToCategoryModel(categoryEntity);
     }
 
     @Test
-    void existByNameCase1() {
+    @DisplayName("Should return true when category exists by name")
+    void shouldReturnTrueWhenCategoryExistsByName() {
         when(categoryRepository.findByName("categoryName")).thenReturn(Optional.of(categoryEntity));
 
         boolean result = categoryJpaAdapter.existByName("categoryName");
@@ -75,7 +76,8 @@ class CategoryJpaAdapterTest {
     }
 
     @Test
-    void existByNameCase2() {
+    @DisplayName("Should return false when category does not exist by name")
+    void shouldReturnFalseWhenCategoryDoesNotExistByName() {
         when(categoryRepository.findByName("nonExistentCategory")).thenReturn(Optional.empty());
 
         boolean result = categoryJpaAdapter.existByName("nonExistentCategory");
@@ -86,8 +88,8 @@ class CategoryJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe devolver categorías paginadas correctamente")
-    void getCategoriesPaginated() {
+    @DisplayName("Should return paginated categories correctly")
+    void shouldReturnPaginatedCategoriesCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -98,7 +100,6 @@ class CategoryJpaAdapterTest {
         Page<CategoryEntity> categoryEntities = new PageImpl<>(categoryEntitiesList, pageRequest, categoryEntitiesList.size());
 
         when(categoryRepository.findAll(pageRequest)).thenReturn(categoryEntities);
-        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntity)).thenReturn(categoryModel);
 
         Paginated<CategoryModel> result = categoryJpaAdapter.getCategoriesPaginated(page, size, sort, ascending);
 
@@ -113,35 +114,14 @@ class CategoryJpaAdapterTest {
         verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntity);
     }
 
-    @Test
-    @DisplayName("Debe recuperar categorías por IDs correctamente")
-    void getCategoriesPaginatedByIds() {
-        List<Long> ids = List.of(1L, 2L);
-        List<CategoryEntity> categoryEntities = List.of(categoryEntity, new CategoryEntity());
-        List<CategoryModel> categoryModels = List.of(categoryModel, new CategoryModel(2L, "Books", "Books and novels"));
-
-        when(categoryRepository.findAllById(ids)).thenReturn(categoryEntities);
-        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(0))).thenReturn(categoryModels.get(0));
-        when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(1))).thenReturn(categoryModels.get(1));
-
-        List<CategoryModel> result = categoryJpaAdapter.getCategoriesByIds(ids);
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(categoryModels, result);
-
-        verify(categoryRepository, times(1)).findAllById(ids);
-        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(0));
-        verify(categoryEntityMapper, times(1)).categoryEntityToCategoryModel(categoryEntities.get(1));
-    }
 
 
     @Test
-    @DisplayName("Debe recuperar categorías por IDs correctamente")
-    void getCategoriesByIds() {
+    @DisplayName("Should return categories by IDs correctly")
+    void shouldReturnCategoriesByIdsCorrectly() {
         List<Long> ids = List.of(1L, 2L);
         List<CategoryEntity> categoryEntities = List.of(categoryEntity, new CategoryEntity());
-        List<CategoryModel> categoryModels = List.of(categoryModel, new CategoryModel(2L, "Books", "Books and novels"));
+        List<CategoryModel> categoryModels = List.of(categoryModel, new CategoryModel());
 
         when(categoryRepository.findAllById(ids)).thenReturn(categoryEntities);
         when(categoryEntityMapper.categoryEntityToCategoryModel(categoryEntities.get(0))).thenReturn(categoryModels.get(0));

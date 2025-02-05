@@ -1,6 +1,6 @@
 package com.stock_service.stock.application.mapper.brand_mapper;
 
-import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
+import com.stock_service.stock.application.dto.branddto.BrandRequest;
 import com.stock_service.stock.domain.model.BrandModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

@@ -1,8 +1,6 @@
 package com.stock_service.stock.infrastructure.persistence.jpa.adapter;
 
 import com.stock_service.stock.domain.model.ArticleModel;
-import com.stock_service.stock.domain.model.BrandModel;
-import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.infrastructure.persistence.jpa.entity.ArticleEntity;
 import com.stock_service.stock.infrastructure.persistence.jpa.mapper.IArticleEntityMapper;
@@ -42,10 +40,8 @@ class ArticleJpaAdapterTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        BrandModel brand = new BrandModel(1L, "BrandName", "BrandDescription");
-        CategoryModel category = new CategoryModel(1L, "CategoryName", "CategoryDescription");
 
-        articleModel = new ArticleModel(1L, "ArticleName", "ArticleDescription", 10, 100.0, brand, List.of(category));
+        articleModel = new ArticleModel();
         articleEntity = new ArticleEntity();
 
         when(articleEntityMapper.articleModelToArticleEntity(articleModel)).thenReturn(articleEntity);
@@ -53,8 +49,8 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe guardar el artículo correctamente")
-    void saveArticle() {
+    @DisplayName("Should save article correctly")
+    void shouldSaveArticleCorrectly() {
         when(articleRepository.save(articleEntity)).thenReturn(articleEntity);
 
         ArticleModel result = articleJpaAdapter.saveArticle(articleModel);
@@ -68,8 +64,8 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe verificar la existencia del artículo por nombre correctamente (caso existente)")
-    void existByNameCase1() {
+    @DisplayName("Should return true when article exists by name")
+    void shouldReturnTrueWhenArticleExistsByName() {
         when(articleRepository.findByName("ArticleName")).thenReturn(Optional.of(articleEntity));
 
         boolean result = articleJpaAdapter.existByName("ArticleName");
@@ -80,8 +76,8 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe verificar la existencia del artículo por nombre correctamente (caso no existente)")
-    void existByNameCase2() {
+    @DisplayName("Should return false when article does not exist by name")
+    void shouldReturnFalseWhenArticleDoesNotExistByName() {
         when(articleRepository.findByName("NonExistentArticle")).thenReturn(Optional.empty());
 
         boolean result = articleJpaAdapter.existByName("NonExistentArticle");
@@ -92,8 +88,8 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe devolver artículos paginados correctamente")
-    void getArticlesPaginated() {
+    @DisplayName("Should return paginated articles correctly")
+    void shouldReturnPaginatedArticlesCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -104,7 +100,6 @@ class ArticleJpaAdapterTest {
         Page<ArticleEntity> articleEntities = new PageImpl<>(articleEntitiesList, pageRequest, articleEntitiesList.size());
 
         when(articleRepository.findAll(pageRequest)).thenReturn(articleEntities);
-        when(articleEntityMapper.articleEntityToArticleModel(articleEntity)).thenReturn(articleModel);
 
         Paginated<ArticleModel> result = articleJpaAdapter.getArticlesPaginated(page, size, sort, ascending);
 
@@ -120,8 +115,8 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe obtener artículo por ID correctamente")
-    void getArticleById() {
+    @DisplayName("Should return article by ID correctly")
+    void shouldReturnArticleByIdCorrectly() {
         Long articleId = 1L;
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(articleEntity));
 
@@ -135,11 +130,12 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe reducir la cantidad de artículos correctamente")
-    void reduceArticleQuantity() {
+    @DisplayName("Should reduce article quantity correctly")
+    void shouldReduceArticleQuantityCorrectly() {
         Long articleId = 1L;
         int quantityToReduce = 5;
         int initialQuantity = 10;
+
         articleEntity.setQuantity(initialQuantity);
 
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(articleEntity));
@@ -151,8 +147,8 @@ class ArticleJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe devolver todos los artículos por IDs correctamente")
-    void getAllArticlesByIds() {
+    @DisplayName("Should return all articles by IDs correctly")
+    void shouldReturnAllArticlesByIdsCorrectly() {
         List<Long> articleIds = List.of(1L, 2L);
         List<ArticleEntity> articleEntities = List.of(articleEntity, articleEntity);
 
@@ -169,7 +165,4 @@ class ArticleJpaAdapterTest {
         verify(articleRepository).findAllById(articleIds);
         verify(articleEntityMapper).toArticleModelList(articleEntities);
     }
-
-
-
 }

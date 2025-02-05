@@ -1,7 +1,7 @@
-package com.stock_service.stock.application.handler.category_handler;
+package com.stock_service.stock.application.handler.categoryhandler;
 
-import com.stock_service.stock.application.dto.category_dto.CategoryRequest;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponse;
+import com.stock_service.stock.application.dto.categorydto.CategoryRequest;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponse;
 import com.stock_service.stock.application.mapper.category_mapper.ICategoryRequestMapper;
 import com.stock_service.stock.application.mapper.category_mapper.ICategoryResponseMapper;
 import com.stock_service.stock.domain.api.ICategoryModelServicePort;
@@ -45,17 +45,17 @@ class CategoryHandlerTest {
         MockitoAnnotations.openMocks(this);
 
         categoryRequest = new CategoryRequest();
-        categoryModel = new CategoryModel(1L, "Electronics", "Electronic devices");
+        categoryModel = new CategoryModel();
         categoryResponse = new CategoryResponse();
 
-        // Mock de las respuestas esperadas
-        when(categoryRequestMapper.categoryRequestToCategoryModel(categoryRequest)).thenReturn(categoryModel);
-        when(categoryModelServicePort.saveCategory(categoryModel)).thenReturn(categoryModel);
-        when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
     }
 
     @Test
-    void saveCategory() {
+    @DisplayName("Should save category correctly")
+    void shouldSaveCategoryCorrectly() {
+        when(categoryRequestMapper.categoryRequestToCategoryModel(categoryRequest)).thenReturn(categoryModel);
+        when(categoryModelServicePort.saveCategory(categoryModel)).thenReturn(categoryModel);
+        when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
 
         CategoryResponse result = categoryHandler.saveCategory(categoryRequest);
 
@@ -68,20 +68,20 @@ class CategoryHandlerTest {
     }
 
     @Test
-    @DisplayName("Debe devolver categorías paginadas correctamente")
-    void getCategories() {
+    @DisplayName("Should return paginated categories correctly")
+    void shouldReturnPaginatedCategoriesCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
         boolean ascending = true;
 
-        categoryResponse.setId(1L);
-        categoryResponse.setName("Books");
-        categoryResponse.setDescription("Various books");
         paginatedCategoryModel = new Paginated<>(List.of(categoryModel), page, size, 1);
 
-        when(categoryModelServicePort.getCategoriesPaginated(page, size, sort, ascending)).thenReturn(paginatedCategoryModel);
-        when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel)).thenReturn(categoryResponse);
+        when(categoryModelServicePort.getCategoriesPaginated(page, size, sort, ascending))
+                .thenReturn(paginatedCategoryModel);
+
+        when(categoryResponseMapper.categoryModelToCategoryResponse(categoryModel))
+                .thenReturn(categoryResponse);
 
         Paginated<CategoryResponse> result = categoryHandler.getCategories(page, size, sort, ascending);
 
@@ -92,13 +92,16 @@ class CategoryHandlerTest {
         assertEquals(size, result.getPageSize());
         assertEquals(1, result.getTotalPages());
 
-        verify(categoryModelServicePort, times(1)).getCategoriesPaginated(page, size, sort, ascending);
-        verify(categoryResponseMapper, times(1)).categoryModelToCategoryResponse(categoryModel);
+        verify(categoryModelServicePort, times(1))
+                .getCategoriesPaginated(page, size, sort, ascending);
+
+        verify(categoryResponseMapper, times(1))
+                .categoryModelToCategoryResponse(categoryModel);
     }
 
     @Test
-    @DisplayName("Debe devolver los nombres de las categorías por ID de artículo correctamente")
-    void getCategoryNamesByArticleId() {
+    @DisplayName("Should return category names by article ID correctly")
+    void shouldReturnCategoryNamesByArticleIdCorrectly() {
         Long articleId = 1L;
         List<String> expectedCategoryNames = List.of("Electronics", "Smartphones");
 

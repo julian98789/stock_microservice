@@ -1,8 +1,8 @@
-package com.stock_service.stock.application.handler.article_handler;
+package com.stock_service.stock.application.handler.articlehandler;
 
-import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
+import com.stock_service.stock.application.dto.articledto.ArticleQuantityRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleResponse;
 import com.stock_service.stock.domain.util.Paginated;
 
 import java.util.List;

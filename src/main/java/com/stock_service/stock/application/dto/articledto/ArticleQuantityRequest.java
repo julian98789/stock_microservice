@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.dto.article_dto;
+package com.stock_service.stock.application.dto.articledto;
 
 import com.stock_service.stock.domain.util.Util;
 import jakarta.validation.constraints.Min;

@@ -11,6 +11,12 @@ public class BrandModel {
         this.description = description;
     }
 
+    public BrandModel(){}
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getDescription() {
         return description;
     }

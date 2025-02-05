@@ -1,7 +1,6 @@
 package com.stock_service.stock.domain.api;
 
 import com.stock_service.stock.domain.model.ArticleModel;
-import com.stock_service.stock.domain.util.Paginated;
 
 import java.util.List;
 

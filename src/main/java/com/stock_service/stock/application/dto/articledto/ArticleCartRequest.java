@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.dto.article_dto;
+package com.stock_service.stock.application.dto.articledto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

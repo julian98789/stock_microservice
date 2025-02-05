@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.dto.category_dto;
+package com.stock_service.stock.application.dto.categorydto;
 
 import lombok.Getter;
 import lombok.Setter;

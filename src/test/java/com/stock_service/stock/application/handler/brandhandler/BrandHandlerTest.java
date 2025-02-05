@@ -1,7 +1,7 @@
-package com.stock_service.stock.application.handler.brand_handler;
+package com.stock_service.stock.application.handler.brandhandler;
 
-import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
-import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
+import com.stock_service.stock.application.dto.branddto.BrandRequest;
+import com.stock_service.stock.application.dto.branddto.BrandResponse;
 import com.stock_service.stock.application.mapper.brand_mapper.IBrandRequestMapper;
 import com.stock_service.stock.application.mapper.brand_mapper.IBrandResponseMapper;
 import com.stock_service.stock.domain.api.IBrandModelServicePort;
@@ -46,39 +46,35 @@ class BrandHandlerTest {
 
         brandRequest = new BrandRequest();
         brandResponse = new BrandResponse();
-        brandModel = new BrandModel(1L, "Samsung", "Samsung Electronics");
+        brandModel = new BrandModel();
 
-        when(brandRequestMapper.brandRequestToBrandModel(brandRequest)).thenReturn(brandModel);
-        when(brandModelServicePort.saveBrand(brandModel)).thenReturn(brandModel);
-        when(brandResponseMapper.brandModelToBrandResponse(brandModel)).thenReturn(brandResponse);
     }
 
     @Test
-    void saveBrand() {
+    @DisplayName("Should save brand correctly")
+    void shouldSaveBrandCorrectly() {
+        when(brandRequestMapper.brandRequestToBrandModel(brandRequest)).thenReturn(brandModel);
+        when(brandModelServicePort.saveBrand(brandModel)).thenReturn(brandModel);
+        when(brandResponseMapper.brandModelToBrandResponse(brandModel)).thenReturn(brandResponse);
 
         BrandResponse result = brandHandler.saveBrand(brandRequest);
 
-        // Verificar resultados
         assertNotNull(result);
         assertEquals(brandResponse, result);
 
-        // Verificar interacciones con los mocks
         verify(brandRequestMapper).brandRequestToBrandModel(brandRequest);
         verify(brandModelServicePort).saveBrand(brandModel);
         verify(brandResponseMapper).brandModelToBrandResponse(brandModel);
     }
 
     @Test
-    @DisplayName("Debe devolver marcas paginadas correctamente")
-    void getBrandsPaginated() {
+    @DisplayName("Should return paginated brands correctly")
+    void shouldReturnPaginatedBrandsCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
         boolean ascending = true;
 
-        brandResponse.setId(1L);
-        brandResponse.setName("Samsung");
-        brandResponse.setDescription("Samsung Electronics");
         paginatedBrandModel = new Paginated<>(List.of(brandModel), page, size, 1);
 
         when(brandModelServicePort.getBrandsPaginated(page, size, sort, ascending)).thenReturn(paginatedBrandModel);

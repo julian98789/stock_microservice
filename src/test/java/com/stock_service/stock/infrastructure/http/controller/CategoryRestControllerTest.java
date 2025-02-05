@@ -1,9 +1,9 @@
 package com.stock_service.stock.infrastructure.http.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stock_service.stock.application.dto.category_dto.CategoryRequest;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponse;
-import com.stock_service.stock.application.handler.category_handler.CategoryHandler;
+import com.stock_service.stock.application.dto.categorydto.CategoryRequest;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponse;
+import com.stock_service.stock.application.handler.categoryhandler.CategoryHandler;
 import com.stock_service.stock.domain.util.Paginated;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,11 +39,19 @@ class CategoryRestControllerTest {
 
     private ObjectMapper objectMapper;
 
+    private CategoryRequest categoryRequest;
+    private CategoryResponse categoryResponse;
+
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(categoryRestController).build();
-        CategoryResponse categoryResponse = new CategoryResponse();
+
+        categoryRequest = new CategoryRequest();
+        categoryRequest.setName("Electronics");
+        categoryRequest.setDescription("Electronic devices");
+
+        categoryResponse = new CategoryResponse();
         categoryResponse.setId(1L);
         categoryResponse.setName("New Category");
         categoryResponse.setDescription("New Description");
@@ -52,35 +60,29 @@ class CategoryRestControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Debe guardar la categoría correctamente")
-    void saveCategoryCase1() throws Exception {
-        CategoryRequest categoryRequest = new CategoryRequest();
-        categoryRequest.setName("Electronics");
-        categoryRequest.setDescription("Electronic devices");
-        CategoryResponse categoryResponse = new CategoryResponse();
-
-
+    @DisplayName("Should save category correctly")
+    void shouldSaveCategoryCorrectly() throws Exception {
         when(categoryHandler.saveCategory(any(CategoryRequest.class))).thenReturn(categoryResponse);
 
         mockMvc.perform(post("/api/category/crear")
-                .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
-                        .andExpect(status().isCreated())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(categoryResponse)));
 
         verify(categoryHandler, times(1)).saveCategory(any(CategoryRequest.class));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Debe devolver categorías paginadas correctamente")
-    void getCategorie() throws Exception {
+    @DisplayName("Should return paginated categories correctly")
+    void shouldReturnPaginatedCategoriesCorrectly() throws Exception {
         int page = 0;
         int size = 10;
         String sort = "name";
         boolean ascending = true;
 
-        CategoryResponse categoryResponse = new CategoryResponse();
         Paginated<CategoryResponse> paginatedResponse = new Paginated<>(List.of(categoryResponse), page, size, 1);
 
         when(categoryHandler.getCategories(page, size, sort, ascending)).thenReturn(paginatedResponse);
@@ -92,26 +94,29 @@ class CategoryRestControllerTest {
                         .param("ascending", String.valueOf(ascending))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(paginatedResponse)));
 
         verify(categoryHandler, times(1)).getCategories(page, size, sort, ascending);
     }
 
     @Test
-    @WithMockUser(roles = {"ADMIN", "CLIENTE", "AUX_BODEGA"})
-    @DisplayName("Debe devolver nombres de categorías por ID de artículo correctamente")
-    void getCategoryNamesByArticleId() throws Exception {
+    @WithMockUser(roles = {"ADMIN", "CLIENT", "AUX_BODEGA"})
+    @DisplayName("Should return category names by article ID correctly")
+    void shouldReturnCategoryNamesByArticleIdCorrectly() throws Exception {
         Long articleId = 1L;
         List<String> categoryNames = List.of("Electronics", "Home Appliances");
+
+        String expectedResponse = objectMapper.writeValueAsString(categoryNames);
 
         when(categoryHandler.getCategoryNamesByArticleId(articleId)).thenReturn(categoryNames);
 
         mockMvc.perform(get("/api/category/names-by-article/{articleId}", articleId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(expectedResponse));
 
         verify(categoryHandler, times(1)).getCategoryNamesByArticleId(articleId);
     }
-
 }

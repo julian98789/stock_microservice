@@ -12,8 +12,10 @@ public class ArticleModel {
     private BrandModel brand;
     private List<CategoryModel> categories;
 
-    public ArticleModel(Long id, String name, String description, int quantity, double price, BrandModel brand,
-                        List<CategoryModel> categories) {
+    public ArticleModel(Long id, String name, String description,
+                        int quantity, double price, BrandModel brand,
+                        List<CategoryModel> categories)
+    {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -22,6 +24,12 @@ public class ArticleModel {
         this.brand = brand;
         this.categories = categories;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ArticleModel(){}
 
     public Long getId() {
         return id;

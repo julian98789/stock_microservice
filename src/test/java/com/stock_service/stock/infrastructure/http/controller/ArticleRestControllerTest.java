@@ -1,13 +1,14 @@
 package com.stock_service.stock.infrastructure.http.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stock_service.stock.application.dto.article_dto.ArticleCartRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleQuantityRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleRequest;
-import com.stock_service.stock.application.dto.article_dto.ArticleResponse;
-import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
-import com.stock_service.stock.application.dto.category_dto.CategoryResponseForArticle;
-import com.stock_service.stock.application.handler.article_handler.ArticleHandler;
+import com.stock_service.stock.application.dto.articledto.ArticleCartRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleQuantityRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleRequest;
+import com.stock_service.stock.application.dto.articledto.ArticleResponse;
+import com.stock_service.stock.application.dto.branddto.BrandResponse;
+import com.stock_service.stock.application.dto.categorydto.CategoryResponseForArticle;
+import com.stock_service.stock.application.handler.articlehandler.ArticleHandler;
+
 import com.stock_service.stock.domain.util.Paginated;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,37 +54,26 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Debe guardar el artículo correctamente")
-    void saveArticle() throws Exception {
+    @DisplayName("Should save article correctly")
+    void shouldSaveArticleCorrectly() throws Exception {
+
+        BrandResponse brandResponse = new BrandResponse();
+        List<CategoryResponseForArticle> categories = List.of(new CategoryResponseForArticle());
+
         ArticleRequest articleRequest = new ArticleRequest();
-        articleRequest.setName("ArticleName");
-        articleRequest.setDescription("ArticleDescription");
-        articleRequest.setQuantity(10);
-        articleRequest.setPrice(100.0);
+        articleRequest.setName("Laptop");
+        articleRequest.setDescription("Laptop de alta gama");
+        articleRequest.setPrice(1500.00);
         articleRequest.setBrandId(1L);
-        articleRequest.setCategoryIds(List.of(1L, 2L));
+        articleRequest.setCategoryIds(List.of(2L, 3L));
 
         ArticleResponse articleResponse = new ArticleResponse();
         articleResponse.setId(1L);
-        articleResponse.setName("ArticleName");
-        articleResponse.setDescription("ArticleDescription");
-        articleResponse.setQuantity(10);
-        articleResponse.setPrice(100.0);
-        BrandResponse brandResponse = new BrandResponse();
-        brandResponse.setId(1L);
-        brandResponse.setName("BrandName");
-        brandResponse.setDescription("BrandDescription");
+        articleResponse.setName(articleRequest.getName());
+        articleResponse.setDescription(articleRequest.getDescription());
+        articleResponse.setPrice(articleRequest.getPrice());
         articleResponse.setBrand(brandResponse);
-        articleResponse.setCategories(List.of(
-                new CategoryResponseForArticle() {{
-                    setId(1L);
-                    setName("Category1");
-                }},
-                new CategoryResponseForArticle() {{
-                    setId(2L);
-                    setName("Category2");
-                }}
-        ));
+        articleResponse.setCategories(categories);
 
         when(articleHandler.saveArticle(any(ArticleRequest.class))).thenReturn(articleResponse);
 
@@ -99,8 +89,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Debe devolver artículos paginados correctamente")
-    void getArticles() throws Exception {
+    @DisplayName("Should return paginated articles correctly")
+    void shouldReturnPaginatedArticlesCorrectly() throws Exception {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -125,8 +115,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Debe obtener el artículo por ID correctamente")
-    void getArticleById() throws Exception {
+    @DisplayName("Should return article by ID correctly")
+    void shouldReturnArticleByIdCorrectly() throws Exception {
         when(articleHandler.getArticleById(anyLong())).thenReturn(true);
 
         mockMvc.perform(get("/api/article/{articleId}", 1L))
@@ -139,8 +129,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "AUX_BODEGA")
-    @DisplayName("Debe actualizar la cantidad del artículo correctamente")
-    void updateArticleQuantity() throws Exception {
+    @DisplayName("Should update article quantity correctly")
+    void shouldUpdateArticleQuantityCorrectly() throws Exception {
         ArticleQuantityRequest request = new ArticleQuantityRequest();
         request.setQuantity(5);
 
@@ -156,8 +146,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "CLIENTE")
-    @DisplayName("Debe verificar si el stock es suficiente correctamente")
-    void isStockSufficient() throws Exception {
+    @DisplayName("Should verify if stock is sufficient correctly")
+    void shouldVerifyIfStockIsSufficientCorrectly() throws Exception {
         when(articleHandler.checkAvailabilityArticle(anyLong(), anyInt())).thenReturn(true);
 
         mockMvc.perform(get("/api/article/{articleId}/check-quantity/{quantity}", 1L, 10))
@@ -170,8 +160,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "CLIENTE")
-    @DisplayName("Debe reducir la cantidad del artículo correctamente")
-    void reduceArticleQuantity() throws Exception {
+    @DisplayName("Should reduce article quantity correctly")
+    void shouldReduceArticleQuantityCorrectly() throws Exception {
         ArticleQuantityRequest request = new ArticleQuantityRequest();
         request.setQuantity(5);
 
@@ -187,8 +177,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = "CLIENTE")
-    @DisplayName("Debe obtener el precio del artículo por ID correctamente")
-    void getArticlePriceById() throws Exception {
+    @DisplayName("Should return article price by ID correctly")
+    void shouldReturnArticlePriceByIdCorrectly() throws Exception {
         when(articleHandler.getArtclePriceById(anyLong())).thenReturn(100.0);
 
         mockMvc.perform(get("/api/article/{articleId}/price", 1L))
@@ -201,8 +191,8 @@ class ArticleRestControllerTest {
 
     @Test
     @WithMockUser(roles = {"ADMIN", "CLIENTE", "AUX_BODEGA"})
-    @DisplayName("Debe devolver artículos paginados por IDs correctamente")
-    void getAllArticlesPaginatedByIds() throws Exception {
+    @DisplayName("Should return paginated articles by IDs correctly")
+    void shouldReturnPaginatedArticlesByIdsCorrectly() throws Exception {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -223,15 +213,16 @@ class ArticleRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(articleCartRequest)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(paginatedResponse)));
 
         verify(articleHandler, times(1)).getAllArticlesPaginatedByIds(page, size, sort, ascending, null, null, articleCartRequest.getArticleIds());
     }
 
     @Test
     @WithMockUser(roles = "CLIENTE")
-    @DisplayName("Debe devolver todos los artículos por IDs correctamente")
-    void getAllArticles() throws Exception {
+    @DisplayName("Should return all articles by IDs correctly")
+    void shouldReturnAllArticlesByIdsCorrectly() throws Exception {
         ArticleCartRequest articleCartRequest = new ArticleCartRequest();
         articleCartRequest.setArticleIds(List.of(1L, 2L));
 
@@ -243,7 +234,8 @@ class ArticleRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(articleCartRequest)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(articleResponses)));
 
         verify(articleHandler, times(1)).getAllArticlesByIds(articleCartRequest.getArticleIds());
     }

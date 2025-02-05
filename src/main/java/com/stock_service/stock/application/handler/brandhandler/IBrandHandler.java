@@ -1,7 +1,7 @@
-package com.stock_service.stock.application.handler.brand_handler;
+package com.stock_service.stock.application.handler.brandhandler;
 
-import com.stock_service.stock.application.dto.brand_dto.BrandRequest;
-import com.stock_service.stock.application.dto.brand_dto.BrandResponse;
+import com.stock_service.stock.application.dto.branddto.BrandRequest;
+import com.stock_service.stock.application.dto.branddto.BrandResponse;
 import com.stock_service.stock.domain.util.Paginated;
 
 public interface IBrandHandler {

@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.dto.category_dto;
+package com.stock_service.stock.application.dto.categorydto;
 
 import com.stock_service.stock.domain.util.Util;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CategoryRequest {
+
     @NotBlank(message = Util.NAME_REQUIRED)
     @Size(min = Util.NAME_MIN_VALUE, max = Util.NAME_MAX_VALUE, message = Util.NAME_SIZE)
     private String name;

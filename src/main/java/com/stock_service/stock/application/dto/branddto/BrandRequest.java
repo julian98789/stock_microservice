@@ -1,5 +1,6 @@
-package com.stock_service.stock.application.dto.brand_dto;
+package com.stock_service.stock.application.dto.branddto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stock_service.stock.domain.util.Util;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,6 +16,8 @@ public class BrandRequest {
     private String name;
 
     @NotBlank(message = Util.DESCRIPTION_REQUIRED)
-    @Size(min =  Util.DESCRIPTION_MIN_VALUE, max = Util.DESCRIPTION_CATEGORY_MAX_VALUE, message = Util.DESCRIPTION_CATEGORY_SIZE)
+    @Size(min =  Util.DESCRIPTION_MIN_VALUE, max = Util.DESCRIPTION_CATEGORY_MAX_VALUE,
+            message = Util.DESCRIPTION_CATEGORY_SIZE)
+    @JsonProperty("description")
     private String description;
 }

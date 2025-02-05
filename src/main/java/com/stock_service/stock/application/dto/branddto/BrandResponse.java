@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.dto.brand_dto;
+package com.stock_service.stock.application.dto.branddto;
 
 import lombok.Getter;
 import lombok.Setter;
