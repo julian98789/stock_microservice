@@ -4,8 +4,8 @@ import com.stock_service.stock.application.dto.articledto.ArticleQuantityRequest
 import com.stock_service.stock.application.dto.articledto.ArticleRequest;
 import com.stock_service.stock.application.dto.articledto.ArticleResponse;
 import com.stock_service.stock.application.dto.categorydto.CategoryResponseForArticle;
-import com.stock_service.stock.application.mapper.article_mapper.IArticleRequestMapper;
-import com.stock_service.stock.application.mapper.article_mapper.IArticleResponseMapper;
+import com.stock_service.stock.application.mapper.articlemapper.IArticleRequestMapper;
+import com.stock_service.stock.application.mapper.articlemapper.IArticleResponseMapper;
 import com.stock_service.stock.domain.api.IArticleModelServicePort;
 import com.stock_service.stock.domain.model.ArticleModel;
 import com.stock_service.stock.domain.model.BrandModel;

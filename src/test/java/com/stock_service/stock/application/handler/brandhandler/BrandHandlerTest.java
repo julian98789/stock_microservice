@@ -2,8 +2,8 @@ package com.stock_service.stock.application.handler.brandhandler;
 
 import com.stock_service.stock.application.dto.branddto.BrandRequest;
 import com.stock_service.stock.application.dto.branddto.BrandResponse;
-import com.stock_service.stock.application.mapper.brand_mapper.IBrandRequestMapper;
-import com.stock_service.stock.application.mapper.brand_mapper.IBrandResponseMapper;
+import com.stock_service.stock.application.mapper.brandmapper.IBrandRequestMapper;
+import com.stock_service.stock.application.mapper.brandmapper.IBrandResponseMapper;
 import com.stock_service.stock.domain.api.IBrandModelServicePort;
 import com.stock_service.stock.domain.model.BrandModel;
 import com.stock_service.stock.domain.util.Paginated;

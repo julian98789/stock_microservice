@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.mapper.article_mapper;
+package com.stock_service.stock.application.mapper.articlemapper;
 
 import com.stock_service.stock.application.dto.articledto.ArticleRequest;
 import com.stock_service.stock.domain.model.ArticleModel;

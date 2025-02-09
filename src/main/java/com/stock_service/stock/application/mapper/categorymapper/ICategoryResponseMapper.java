@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.mapper.category_mapper;
+package com.stock_service.stock.application.mapper.categorymapper;
 
 import com.stock_service.stock.application.dto.categorydto.CategoryResponseForArticle;
 import com.stock_service.stock.application.dto.categorydto.CategoryResponse;

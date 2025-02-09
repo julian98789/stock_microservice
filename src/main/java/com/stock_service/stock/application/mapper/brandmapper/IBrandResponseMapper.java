@@ -1,4 +1,4 @@
-package com.stock_service.stock.application.mapper.brand_mapper;
+package com.stock_service.stock.application.mapper.brandmapper;
 
 import com.stock_service.stock.application.dto.branddto.BrandResponse;
 import com.stock_service.stock.domain.model.BrandModel;

@@ -2,8 +2,8 @@ package com.stock_service.stock.application.handler.categoryhandler;
 
 import com.stock_service.stock.application.dto.categorydto.CategoryRequest;
 import com.stock_service.stock.application.dto.categorydto.CategoryResponse;
-import com.stock_service.stock.application.mapper.category_mapper.ICategoryRequestMapper;
-import com.stock_service.stock.application.mapper.category_mapper.ICategoryResponseMapper;
+import com.stock_service.stock.application.mapper.categorymapper.ICategoryRequestMapper;
+import com.stock_service.stock.application.mapper.categorymapper.ICategoryResponseMapper;
 import com.stock_service.stock.domain.api.ICategoryModelServicePort;
 import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.util.Paginated;
