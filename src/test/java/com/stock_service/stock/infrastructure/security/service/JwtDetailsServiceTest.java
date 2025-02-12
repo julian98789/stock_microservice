@@ -26,8 +26,8 @@ class JwtDetailsServiceTest {
     }
 
     @Test
-    @DisplayName("Deberia retornar UserDetails cuando el JWT sea valido")
-    void validJwt() {
+    @DisplayName("Should return UserDetails when JWT is valid")
+    void shouldReturnUserDetailsWhenJwtIsValid() {
         String jwt = "valid.jwt.token";
         String username = "testUser";
         String role = "ROLE_USER";
@@ -44,8 +44,8 @@ class JwtDetailsServiceTest {
     }
 
     @Test
-    @DisplayName("Deberia lanzar UsernameNotFoundException cuando el JWT sea invalido")
-    void invalidJwt() {
+    @DisplayName("Should throw UsernameNotFoundException when JWT is invalid")
+    void shouldThrowUsernameNotFoundExceptionWhenJwtIsInvalid() {
         String jwt = "invalid.jwt.token";
 
         when(jwtService.extractUsername(jwt)).thenThrow(new UsernameNotFoundException("Invalid JWT"));

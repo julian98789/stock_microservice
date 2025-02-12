@@ -40,7 +40,7 @@ class BrandJpaAdapterTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        brandModel = new BrandModel(1L, "Samsung", "Samsung Electronics");
+        brandModel = new BrandModel();
         brandEntity = new BrandEntity();
 
         when(brandEntityMapper.brandModelToBrandEntity(brandModel)).thenReturn(brandEntity);
@@ -50,8 +50,8 @@ class BrandJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe guardar la marca correctamente")
-    void saveBrand() {
+    @DisplayName("Should save brand correctly")
+    void shouldSaveBrandCorrectly() {
         when(brandRepository.save(brandEntity)).thenReturn(brandEntity);
 
         BrandModel result = brandJpaAdapter.saveBrand(brandModel);
@@ -60,14 +60,13 @@ class BrandJpaAdapterTest {
         assertEquals(brandModel, result);
 
         verify(brandRepository).save(brandEntity);
-
         verify(brandEntityMapper).brandModelToBrandEntity(brandModel);
         verify(brandEntityMapper).brandEntityToBrandModel(brandEntity);
     }
 
     @Test
-    @DisplayName("Debe verificar la existencia de la marca por nombre correctamente (caso existente)")
-    void existsByNameCase1() {
+    @DisplayName("Should return true when brand exists by name")
+    void shouldReturnTrueWhenBrandExistsByName() {
         when(brandRepository.findByName("brandName")).thenReturn(Optional.of(brandEntity));
 
         boolean result = brandJpaAdapter.existsByName("brandName");
@@ -78,8 +77,8 @@ class BrandJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe verificar la existencia de la marca por nombre correctamente (caso no existente)")
-    void existsByNameCase2() {
+    @DisplayName("Should return false when brand does not exist by name")
+    void shouldReturnFalseWhenBrandDoesNotExistByName() {
         when(brandRepository.findByName("nonExistentBrand")).thenReturn(Optional.empty());
 
         boolean result = brandJpaAdapter.existsByName("nonExistentBrand");
@@ -90,8 +89,8 @@ class BrandJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe devolver marcas paginadas correctamente")
-    void getBrandsPaginated() {
+    @DisplayName("Should return paginated brands correctly")
+    void shouldReturnPaginatedBrandsCorrectly() {
         int page = 0;
         int size = 10;
         String sort = "name";
@@ -102,7 +101,6 @@ class BrandJpaAdapterTest {
         Page<BrandEntity> brandEntities = new PageImpl<>(brandEntitiesList, pageRequest, brandEntitiesList.size());
 
         when(brandRepository.findAll(pageRequest)).thenReturn(brandEntities);
-        when(brandEntityMapper.brandEntityToBrandModel(brandEntity)).thenReturn(brandModel);
 
         Paginated<BrandModel> result = brandJpaAdapter.getBrandsPaginated(page, size, sort, ascending);
 
@@ -118,11 +116,10 @@ class BrandJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("Debe recuperar la marca por ID correctamente")
-    void getBrandById() {
+    @DisplayName("Should return brand by ID correctly")
+    void shouldReturnBrandByIdCorrectly() {
         Long id = 1L;
         when(brandRepository.findById(id)).thenReturn(Optional.of(brandEntity));
-        when(brandEntityMapper.brandEntityToBrandModel(brandEntity)).thenReturn(brandModel);
 
         BrandModel result = brandJpaAdapter.getBrandById(id);
 

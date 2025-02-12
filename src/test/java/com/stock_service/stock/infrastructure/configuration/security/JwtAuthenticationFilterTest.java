@@ -46,8 +46,8 @@ class JwtAuthenticationFilterTest {
 
 
     @Test
-    @DisplayName("Debe establecer la autenticacion cuando JWT sea valido")
-    void doFilterInternal_ValidJwt() throws ServletException, IOException {
+    @DisplayName("Should set authentication when JWT is valid")
+    void shouldSetAuthenticationWhenJwtIsValid() throws ServletException, IOException {
         String jwt = "valid.jwt.token";
         String authHeader = Util.TOKEN_PREFIX + jwt;
         UserDetails userDetails = mock(UserDetails.class);
@@ -62,5 +62,4 @@ class JwtAuthenticationFilterTest {
         assertTrue(authToken.getAuthorities().isEmpty());
         verify(filterChain).doFilter(request, response);
     }
-
 }

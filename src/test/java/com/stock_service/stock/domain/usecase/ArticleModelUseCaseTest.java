@@ -1,12 +1,9 @@
 package com.stock_service.stock.domain.usecase;
 
+import com.stock_service.stock.domain.exception.InsufficientStockException;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
-import com.stock_service.stock.domain.exception.NotFoundException;
 import com.stock_service.stock.domain.model.ArticleModel;
-import com.stock_service.stock.domain.model.BrandModel;
-import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.IArticleModelPersistencePort;
-import com.stock_service.stock.domain.util.Paginated;
 import com.stock_service.stock.domain.util.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,22 +22,26 @@ class ArticleModelUseCaseTest {
     @Mock
     private IArticleModelPersistencePort articleModelPersistencePort;
 
-    ArticleModel articleModel;
 
     @InjectMocks
     private ArticleModelUseCase articleModelUseCase;
 
+    ArticleModel articleModel;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        BrandModel brand = new BrandModel(1L, "BrandName", "BrandDescription");
-        CategoryModel category = new CategoryModel(1L, "CategoryName", "CategoryDescription");
-        articleModel = new ArticleModel(1L, "ArticleName", "ArticleDescription", 10, 100.0, brand, List.of(category));
+
+        articleModel = new ArticleModel();
+        articleModel.setId(1L);
+        articleModel.setName("ArticleName");
+        articleModel.setQuantity(10);
+        articleModel.setPrice(100.0);
     }
 
     @Test
-    @DisplayName("Debe lanzar NameAlreadyExistsException cuando el nombre del artículo ya existe")
-    void saveArticle() {
+    @DisplayName("Should throw NameAlreadyExistsException when article name already exists")
+    void shouldThrowNameAlreadyExistsExceptionWhenArticleNameAlreadyExists() {
         String existingArticleName = "ArticleName";
 
         when(articleModelPersistencePort.existByName(existingArticleName)).thenReturn(true);
@@ -50,15 +50,26 @@ class ArticleModelUseCaseTest {
                 NameAlreadyExistsException.class,
                 () -> articleModelUseCase.saveArticle(articleModel)
         );
-
         assertEquals(Util.ARTICLE_NAME_ALREADY_EXISTS, exception.getMessage());
         verify(articleModelPersistencePort, never()).saveArticle(articleModel);
     }
 
+    @Test
+    @DisplayName("Should save article correctly when name does not exist")
+    void shouldSaveArticleCorrectlyWhenNameDoesNotExist() {
+        when(articleModelPersistencePort.existByName(articleModel.getName())).thenReturn(false);
+        when(articleModelPersistencePort.saveArticle(articleModel)).thenReturn(articleModel);
+
+        ArticleModel result = articleModelUseCase.saveArticle(articleModel);
+
+        assertNotNull(result);
+        assertEquals(articleModel, result);
+        verify(articleModelPersistencePort).saveArticle(articleModel);
+    }
 
     @Test
-    @DisplayName("Debe reducir la cantidad del artículo correctamente")
-    void reduceStock() {
+    @DisplayName("Should reduce article quantity correctly")
+    void shouldReduceArticleQuantityCorrectly() {
         Long articleId = 1L;
         int quantityToReduce = 5;
 
@@ -67,13 +78,29 @@ class ArticleModelUseCaseTest {
 
         articleModelUseCase.reduceStock(articleId, quantityToReduce);
 
-        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
-        verify(articleModelPersistencePort, times(1)).reduceArticleQuantity(articleId, quantityToReduce);
+        verify(articleModelPersistencePort).getArticleById(articleId);
+        verify(articleModelPersistencePort).reduceArticleQuantity(articleId, quantityToReduce);
     }
 
     @Test
-    @DisplayName("Debe obtener el precio del artículo por ID correctamente")
-    void getArticlePriceById() {
+    @DisplayName("Should throw InsufficientStockException when reducing more than available stock")
+    void shouldThrowInsufficientStockExceptionWhenReducingMoreThanAvailableStock() {
+        Long articleId = 1L;
+        int quantityToReduce = 15;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        InsufficientStockException exception = assertThrows(
+                InsufficientStockException.class,
+                () -> articleModelUseCase.reduceStock(articleId, quantityToReduce)
+        );
+        assertEquals(Util.INSUFFICIENT_STOCK, exception.getMessage());
+        verify(articleModelPersistencePort, never()).reduceArticleQuantity(articleId, quantityToReduce);
+    }
+
+    @Test
+    @DisplayName("Should return article price by ID correctly")
+    void shouldReturnArticlePriceByIdCorrectly() {
         Long articleId = 1L;
         Double expectedPrice = 100.0;
 
@@ -83,12 +110,12 @@ class ArticleModelUseCaseTest {
 
         assertNotNull(result);
         assertEquals(expectedPrice, result);
-        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+        verify(articleModelPersistencePort).getArticleById(articleId);
     }
 
     @Test
-    @DisplayName("Debe obtener el artículo por ID correctamente")
-    void existsArticleById() {
+    @DisplayName("Should return true when article exists by ID")
+    void shouldReturnTrueWhenArticleExistsById() {
         Long articleId = 1L;
 
         when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
@@ -96,12 +123,25 @@ class ArticleModelUseCaseTest {
         boolean result = articleModelUseCase.existsArticleById(articleId);
 
         assertTrue(result);
-        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+        verify(articleModelPersistencePort).getArticleById(articleId);
     }
 
     @Test
-    @DisplayName("Debe actualizar la cantidad del artículo correctamente")
-    void updateArticleQuantity() {
+    @DisplayName("Should return false when article does not exist by ID")
+    void shouldReturnFalseWhenArticleDoesNotExistById() {
+        Long articleId = 1L;
+
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(null);
+
+        boolean result = articleModelUseCase.existsArticleById(articleId);
+
+        assertFalse(result);
+        verify(articleModelPersistencePort).getArticleById(articleId);
+    }
+
+    @Test
+    @DisplayName("Should update article quantity correctly")
+    void shouldUpdateArticleQuantityCorrectly() {
         Long articleId = 1L;
         int newQuantity = 20;
 
@@ -112,13 +152,13 @@ class ArticleModelUseCaseTest {
 
         assertNotNull(result);
         assertEquals(newQuantity, result.getQuantity());
-        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
-        verify(articleModelPersistencePort, times(1)).saveArticle(articleModel);
+        verify(articleModelPersistencePort).getArticleById(articleId);
+        verify(articleModelPersistencePort).saveArticle(articleModel);
     }
 
     @Test
-    @DisplayName("Debe verificar si el stock es suficiente correctamente")
-    void isStockAvailable() {
+    @DisplayName("Should verify if stock is sufficient correctly")
+    void shouldVerifyIfStockIsSufficientCorrectly() {
         Long articleId = 1L;
         int requestedQuantity = 5;
 
@@ -127,14 +167,26 @@ class ArticleModelUseCaseTest {
         boolean result = articleModelUseCase.isStockAvailable(articleId, requestedQuantity);
 
         assertTrue(result);
-        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+        verify(articleModelPersistencePort).getArticleById(articleId);
     }
 
+    @Test
+    @DisplayName("Should return false if stock is insufficient")
+    void shouldReturnFalseIfStockIsInsufficient() {
+        Long articleId = 1L;
+        int requestedQuantity = 15;
 
+        when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
+
+        boolean result = articleModelUseCase.isStockAvailable(articleId, requestedQuantity);
+
+        assertFalse(result);
+        verify(articleModelPersistencePort).getArticleById(articleId);
+    }
 
     @Test
-    @DisplayName("Debe obtener artículo por ID correctamente")
-    void getArticleById() {
+    @DisplayName("Should return article by ID correctly")
+    void shouldReturnArticleByIdCorrectly() {
         Long articleId = 1L;
 
         when(articleModelPersistencePort.getArticleById(articleId)).thenReturn(articleModel);
@@ -143,15 +195,15 @@ class ArticleModelUseCaseTest {
 
         assertNotNull(result);
         assertEquals(articleModel, result);
-        verify(articleModelPersistencePort, times(1)).getArticleById(articleId);
+        verify(articleModelPersistencePort).getArticleById(articleId);
     }
 
 
     @Test
-    @DisplayName("Debe obtener todos los artículos por IDs correctamente")
-    void getAllArticlesByIds() {
+    @DisplayName("Should return all articles by IDs correctly")
+    void shouldReturnAllArticlesByIdsCorrectly() {
         List<Long> articleIds = List.of(1L, 2L);
-        List<ArticleModel> articleModels = List.of(articleModel, new ArticleModel(2L, "AnotherArticle", "AnotherDescription", 5, 50.0, null, null));
+        List<ArticleModel> articleModels = List.of(articleModel, new ArticleModel());
 
         when(articleModelPersistencePort.getAllArticlesByIds(articleIds)).thenReturn(articleModels);
 
@@ -160,8 +212,6 @@ class ArticleModelUseCaseTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(articleModels, result);
-        verify(articleModelPersistencePort, times(1)).getAllArticlesByIds(articleIds);
+        verify(articleModelPersistencePort).getAllArticlesByIds(articleIds);
     }
-
-
 }

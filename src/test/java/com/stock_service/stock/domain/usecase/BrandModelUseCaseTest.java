@@ -36,11 +36,11 @@ class BrandModelUseCaseTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar NameAlreadyExistsException cuando el nombre de la marca ya existe")
-    void saveBrand() {
-        String existingCategoryName = "Samsung";
+    @DisplayName("Should throw NameAlreadyExistsException when brand name already exists")
+    void shouldThrowNameAlreadyExistsExceptionWhenBrandNameAlreadyExists() {
+        String existingBrandName = "Samsung";
 
-        when(brandModelPersistencePort.existsByName(existingCategoryName)).thenReturn(true);
+        when(brandModelPersistencePort.existsByName(existingBrandName)).thenReturn(true);
 
         NameAlreadyExistsException exception = assertThrows(
                 NameAlreadyExistsException.class,
@@ -49,32 +49,25 @@ class BrandModelUseCaseTest {
 
         assertEquals(Util.BRAND_NAME_ALREADY_EXISTS, exception.getMessage());
         verify(brandModelPersistencePort, never()).saveBrand(brandModel);
-
     }
 
-
     @Test
-    @DisplayName("Deberían devolverse las marcas paginadas correctamente")
-    void getBrandsPaginated() {
+    @DisplayName("Should return paginated brands correctly")
+    void shouldReturnPaginatedBrandsCorrectly() {
         int page = 1;
         int size = 5;
         String sort = "name";
         boolean ascending = true;
 
-        BrandModel brand1 = new BrandModel(1l, "Brand A", "Brand A description");
+        BrandModel brand2 = new BrandModel(2L, "Brand B", "Brand B description");
 
-        BrandModel brand2 = new BrandModel(2l, "Brand B", "Brand B description");
-
-
-        List<BrandModel> brandList = Arrays.asList(brand1, brand2);
+        List<BrandModel> brandList = Arrays.asList(brandModel, brand2);
         Paginated<BrandModel> paginatedResponse = new Paginated<>(brandList, page, size, 10);
 
         when(brandModelPersistencePort.getBrandsPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
 
-        // Act
         Paginated<BrandModel> result = brandModelUseCase.getBrandsPaginated(page, size, sort, ascending);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
         assertEquals(1, result.getPageNumber());

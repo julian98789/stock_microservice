@@ -12,9 +12,16 @@ public class CategoryModel {
         this.description = description;
     }
 
+    public CategoryModel(){}
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }

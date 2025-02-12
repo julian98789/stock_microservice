@@ -3,7 +3,6 @@ package com.stock_service.stock.domain.usecase;
 import com.stock_service.stock.domain.api.IArticleModelServicePort;
 import com.stock_service.stock.domain.exception.NameAlreadyExistsException;
 import com.stock_service.stock.domain.model.ArticleModel;
-import com.stock_service.stock.domain.model.BrandModel;
 import com.stock_service.stock.domain.model.CategoryModel;
 import com.stock_service.stock.domain.spi.ICategoryModelPersistencePort;
 import com.stock_service.stock.domain.util.Paginated;
@@ -42,18 +41,15 @@ class CategoryModelUseCaseTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         categoryModel = new CategoryModel(6L, "Electronics", "Electronic devices");
-        BrandModel brand = new BrandModel(1L, "BrandName", "BrandDescription");
-         articleModel = new ArticleModel(1L, "ArticleName", "ArticleDescription", 10, 100.0, brand, List.of(categoryModel));
+         articleModel = new ArticleModel();
     }
-
     @Test
-    @DisplayName("Debe lanzar NameAlreadyExistsException cuando el nombre de la categoría ya existe")
-    void saveCategory() {
+    @DisplayName("Should throw NameAlreadyExistsException when category name already exists")
+    void shouldThrowNameAlreadyExistsExceptionWhenCategoryNameAlreadyExists() {
         String existingCategoryName = "Electronics";
 
         when(categoryModelPersistencePort.existByName(existingCategoryName)).thenReturn(true);
 
-        // Act & Assert
         NameAlreadyExistsException exception = assertThrows(
                 NameAlreadyExistsException.class,
                 () -> categoryModelUseCase.saveCategory(categoryModel)
@@ -63,25 +59,23 @@ class CategoryModelUseCaseTest {
         verify(categoryModelPersistencePort, never()).saveCategory(any(CategoryModel.class));
     }
 
-
-
     @Test
-    @DisplayName("Deberían devolverse las categorías paginadas correctamente")
-    void getCategoriesPaginated() {
+    @DisplayName("Should return paginated categories correctly")
+    void shouldReturnPaginatedCategoriesCorrectly() {
         int page = 1;
         int size = 5;
         String sort = "name";
         boolean ascending = true;
 
-        CategoryModel categoryModel1 = new CategoryModel(1L, "Electronics", "Electronic devices");
         CategoryModel categoryModel2 = new CategoryModel(2L, "Books", "Books and novels");
 
-        List<CategoryModel> categoryList = Arrays.asList(categoryModel1, categoryModel2);
+        List<CategoryModel> categoryList = Arrays.asList(categoryModel, categoryModel2);
         Paginated<CategoryModel> paginatedResponse = new Paginated<>(categoryList, page, size, 10);
 
-        when(categoryModelPersistencePort.getCategoriesPaginated(page, size, sort, ascending)).thenReturn(paginatedResponse);
+        when(categoryModelPersistencePort.getCategoriesPaginated(page, size, sort, ascending))
+                .thenReturn(paginatedResponse);
 
-        Paginated<CategoryModel>  result = categoryModelUseCase.getCategoriesPaginated(page, size, sort, ascending);
+        Paginated<CategoryModel> result = categoryModelUseCase.getCategoriesPaginated(page, size, sort, ascending);
 
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
@@ -91,12 +85,11 @@ class CategoryModelUseCaseTest {
         assertEquals(2, result.getTotalPages());
 
         verify(categoryModelPersistencePort, times(1)).getCategoriesPaginated(page, size, sort, ascending);
-
     }
 
     @Test
-    @DisplayName("Debe devolver los nombres de las categorías por ID de artículo correctamente")
-    void getCategoryNamesByArticleId() {
+    @DisplayName("Should return category names by article ID correctly")
+    void shouldReturnCategoryNamesByArticleIdCorrectly() {
         Long articleId = 1L;
         articleModel.setCategories(List.of(
                 new CategoryModel(1L, "Electronics", "Electronic devices"),
@@ -113,6 +106,5 @@ class CategoryModelUseCaseTest {
 
         verify(articleModelServicePort, times(1)).getArticleById(articleId);
     }
-
 
 }
